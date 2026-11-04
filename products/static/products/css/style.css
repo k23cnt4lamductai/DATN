@@ -1,0 +1,104 @@
+:root {
+    --pink: #e8728f;
+    --pink-dark: #c9506f;
+    --pink-soft: #fdeef2;
+    --cream: #fffaf5;
+    --brown: #5a3e36;
+    --muted: #8d7b75;
+    --line: #f0e2dc;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--brown);
+    line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- Header ---------- */
+header {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+}
+.header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 0; flex-wrap: wrap;
+}
+.logo { font-size: 1.5rem; font-weight: 700; color: var(--pink-dark); }
+.search { display: flex; flex: 1; max-width: 420px; min-width: 240px; }
+.search input {
+    flex: 1; padding: 10px 16px; font-size: .95rem;
+    border: 1px solid var(--line); border-right: none;
+    border-radius: 999px 0 0 999px; outline: none; background: var(--cream);
+}
+.search input:focus { border-color: var(--pink); }
+.search button {
+    padding: 10px 20px; font-size: .95rem; cursor: pointer;
+    background: var(--pink); color: #fff; border: none;
+    border-radius: 0 999px 999px 0; font-weight: 600;
+}
+.search button:hover { background: var(--pink-dark); }
+
+/* ---------- Banner ---------- */
+.hero {
+    background: linear-gradient(135deg, var(--pink-soft), #fff3e6);
+    padding: 44px 0; text-align: center;
+}
+.hero h1 { font-size: 2rem; color: var(--pink-dark); margin-bottom: 8px; }
+.hero p { color: var(--muted); }
+
+/* ---------- Danh mục ---------- */
+.categories { display: flex; flex-wrap: wrap; gap: 10px; padding: 28px 0 8px; }
+.cat {
+    padding: 8px 18px; border-radius: 999px; font-size: .92rem;
+    background: #fff; border: 1px solid var(--line); transition: .15s;
+}
+.cat:hover { border-color: var(--pink); color: var(--pink-dark); }
+.cat.active { background: var(--pink); border-color: var(--pink); color: #fff; font-weight: 600; }
+
+.result-info { color: var(--muted); font-size: .92rem; padding: 12px 0 20px; }
+.result-info strong { color: var(--brown); }
+
+/* ---------- Lưới sản phẩm ---------- */
+.grid {
+    display: grid; gap: 22px; padding-bottom: 56px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.card {
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    overflow: hidden; display: flex; flex-direction: column; transition: .2s;
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(201, 80, 111, .12); }
+.thumb {
+    aspect-ratio: 4 / 3; background: var(--pink-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.4rem; position: relative;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.badge {
+    position: absolute; top: 10px; left: 10px; font-size: .75rem; font-weight: 600;
+    background: rgba(90, 62, 54, .85); color: #fff; padding: 3px 10px; border-radius: 999px;
+}
+.info { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.info .cat-name { font-size: .78rem; color: var(--pink-dark); text-transform: uppercase; letter-spacing: .04em; }
+.info h3 { font-size: 1.05rem; line-height: 1.3; }
+.info .desc {
+    font-size: .88rem; color: var(--muted);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.price { margin-top: auto; padding-top: 6px; font-size: 1.15rem; font-weight: 700; color: var(--pink-dark); }
+.sold-out .thumb img, .sold-out .thumb span { opacity: .45; }
+.sold-out .price { color: var(--muted); }
+
+/* ---------- Trống ---------- */
+.empty { text-align: center; padding: 60px 0 90px; color: var(--muted); }
+.empty .big { font-size: 3.5rem; }
+.empty a { color: var(--pink-dark); font-weight: 600; }
+
+footer {
+    background: #fff; border-top: 1px solid var(--line);
+    text-align: center; padding: 22px 0; color: var(--muted); font-size: .88rem;
+}
