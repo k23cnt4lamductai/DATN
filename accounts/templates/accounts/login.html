@@ -1,0 +1,35 @@
+{% extends "products/base.html" %}
+
+{% block title %}Đăng nhập – Tiệm Bánh Ngọt{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <div class="auth-box">
+        <h1 class="page-title">Đăng nhập</h1>
+
+        <form class="checkout-form" method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            {% if form.non_field_errors %}
+                <div class="msg msg-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-row {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for e in field.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                </div>
+            {% endfor %}
+
+            <button class="btn btn-block" type="submit">Đăng nhập</button>
+        </form>
+
+        <p class="auth-switch">
+            Chưa có tài khoản?
+            <a href="{% url 'accounts:register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Đăng ký ngay</a>
+        </p>
+    </div>
+</main>
+{% endblock %}

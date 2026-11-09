@@ -1,0 +1,54 @@
+{% extends "products/base.html" %}
+{% load vnd %}
+
+{% block title %}Đặt hàng – Tiệm Bánh Ngọt{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <h1 class="page-title">Thông tin đặt hàng</h1>
+
+    {% if not user.is_authenticated %}
+        <p class="login-hint">
+            Đã có tài khoản? <a href="{% url 'accounts:login' %}?next={% url 'orders:checkout' %}">Đăng nhập</a>
+            để tự điền thông tin và xem lại đơn sau này.
+        </p>
+    {% endif %}
+
+    <div class="two-col">
+        <form class="checkout-form" method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="msg msg-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-row {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% for e in field.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                </div>
+            {% endfor %}
+
+            <button class="btn btn-block" type="submit">Xác nhận đặt hàng</button>
+            <a class="link-back" href="{% url 'orders:cart' %}">← Quay lại giỏ hàng</a>
+        </form>
+
+        <aside class="summary">
+            <h2>Đơn hàng của bạn</h2>
+            {% for item in items %}
+                <div class="summary-row">
+                    <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                    <span>{{ item.subtotal|vnd }}</span>
+                </div>
+            {% endfor %}
+            <div class="summary-row total">
+                <span>Tổng cộng</span>
+                <strong>{{ total|vnd }}</strong>
+            </div>
+        </aside>
+    </div>
+</main>
+{% endblock %}

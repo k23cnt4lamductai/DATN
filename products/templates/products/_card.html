@@ -1,0 +1,36 @@
+{% load vnd %}
+<article class="card {% if p.stock == 0 %}sold-out{% endif %}">
+    <a class="thumb" href="{{ p.get_absolute_url }}">
+        {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.name }}">
+        {% else %}
+            <span>🍰</span>
+        {% endif %}
+        {% if p.stock == 0 %}<span class="badge">Hết hàng</span>{% endif %}
+    </a>
+    <div class="info">
+        <span class="cat-name">{{ p.category.name }}</span>
+        <h3><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></h3>
+        <div class="rating-line">
+            {% if p.review_count %}
+                <span class="stars" style="--rating: {{ p.avg_rating|stringformat:'.1f' }}"></span>
+                <span>{{ p.avg_rating|floatformat:1 }} ({{ p.review_count }})</span>
+            {% else %}
+                <span class="muted">Chưa có đánh giá</span>
+            {% endif %}
+        </div>
+        {% if p.description %}<p class="desc">{{ p.description }}</p>{% endif %}
+        <div class="price">{{ p.price|vnd }}</div>
+
+        {% if p.stock > 0 %}
+            <form method="post" action="{% url 'orders:cart_add' p.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button class="btn btn-block" type="submit">Thêm vào giỏ</button>
+            </form>
+        {% else %}
+            <button class="btn btn-block" type="button" disabled>Hết hàng</button>
+        {% endif %}
+    </div>
+</article>

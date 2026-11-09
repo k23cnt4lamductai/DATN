@@ -1,0 +1,77 @@
+{% extends "products/base.html" %}
+{% load vnd %}
+
+{% block title %}Giỏ hàng – Tiệm Bánh Ngọt{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <h1 class="page-title">Giỏ hàng của bạn</h1>
+
+    {% if items %}
+        <div class="two-col">
+            <div class="table-wrap">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>
+                                    <a class="cart-prod" href="{{ item.product.get_absolute_url }}">
+                                        <span class="mini-thumb">
+                                            {% if item.product.image %}
+                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                            {% else %}🍰{% endif %}
+                                        </span>
+                                        <span>{{ item.product.name }}</span>
+                                    </a>
+                                </td>
+                                <td>{{ item.product.price|vnd }}</td>
+                                <td>
+                                    <form class="qty-form" method="post"
+                                          action="{% url 'orders:cart_update' item.product.id %}">
+                                        {% csrf_token %}
+                                        <input class="qty" type="number" name="quantity"
+                                               value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}">
+                                        <button class="btn btn-small btn-outline" type="submit">Cập nhật</button>
+                                    </form>
+                                </td>
+                                <td class="strong">{{ item.subtotal|vnd }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'orders:cart_remove' item.product.id %}">
+                                        {% csrf_token %}
+                                        <button class="link-danger" type="submit">Xóa</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <aside class="summary">
+                <h2>Tóm tắt</h2>
+                <div class="summary-row total">
+                    <span>Tổng cộng</span>
+                    <strong>{{ total|vnd }}</strong>
+                </div>
+                <a class="btn btn-block" href="{% url 'orders:checkout' %}">Tiến hành đặt hàng</a>
+                <a class="link-back" href="{% url 'products:home' %}">← Tiếp tục chọn bánh</a>
+            </aside>
+        </div>
+    {% else %}
+        <div class="empty">
+            <div class="big">🛒</div>
+            <p>Giỏ hàng của bạn đang trống.</p>
+            <p><a href="{% url 'products:home' %}">Đi chọn bánh thôi</a></p>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}
