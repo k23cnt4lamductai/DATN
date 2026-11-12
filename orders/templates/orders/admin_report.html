@@ -1,0 +1,197 @@
+{% extends "admin/base_site.html" %}
+{% load vnd %}
+
+{% block content %}
+<style>
+    .rp {
+        --rp-card: #fff; --rp-line: #f0e2dc; --rp-text: #5a3e36; --rp-muted: #8d7b75; --rp-soft: #fdeef2; --rp-brand: #c9506f;
+        color: var(--rp-text); margin-bottom: 30px;
+    }
+    body.dark-mode .rp { --rp-card: #26232d; --rp-line: #3a3642; --rp-text: #eee6e2; --rp-muted: #a89c96; --rp-soft: #3a2530; --rp-brand: #f19ab0; }
+    .rp a { text-decoration: none; }
+    .rp-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
+    .rp-bar form { display: flex; gap: 8px; align-items: center; margin: 0; }
+    .rp-bar input[type=date] { padding: 8px 12px; border: 1px solid var(--rp-line); border-radius: 10px; background: var(--rp-card); color: var(--rp-text); }
+    .rp-btn { display: inline-block; padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: .9rem;
+              background: #e8728f; color: #fff !important; border: 1px solid #e8728f; }
+    .rp-btn:hover { background: #c9506f; border-color: #c9506f; }
+    .rp-btn-ghost { background: var(--rp-card); color: var(--rp-brand) !important; border-color: var(--rp-line); }
+    .rp-btn-ghost:hover { background: var(--rp-soft); border-color: #e8728f; }
+    .rp-btn-off { opacity: .4; pointer-events: none; }
+    .rp-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 14px; }
+    .rp-title small { font-weight: 400; color: var(--rp-muted); margin-left: 8px; }
+
+    .rp-stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 16px; }
+    .rp-card { background: var(--rp-card); border: 1px solid var(--rp-line); border-radius: 14px; padding: 16px 18px; }
+    .rp-card .lbl { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--rp-muted); }
+    .rp-card strong { display: block; font-size: 1.55rem; color: var(--rp-brand); line-height: 1.25; }
+    .rp-card .sub { font-size: .82rem; color: var(--rp-muted); }
+    .rp-hl { background: linear-gradient(135deg, var(--rp-soft), transparent); }
+
+    .rp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .rp-st { display: inline-block; font-size: .75rem; font-weight: 600; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
+    .rp-st-pending { background: #fff6e0; color: #8a5a00; }
+    .rp-st-confirmed { background: #eef4fb; color: #2c5282; }
+    .rp-st-delivering { background: #f0eafc; color: #5b3aa6; }
+    .rp-st-completed { background: #eaf7ef; color: #1f6b41; }
+    .rp-st-cancelled { background: #fdecec; color: #a02727; }
+
+    .rp-section { background: var(--rp-card); border: 1px solid var(--rp-line); border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; }
+    .rp-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    .rp-table th, .rp-table td { padding: 8px 8px; border-bottom: 1px solid var(--rp-line); text-align: left; }
+    .rp-table th { font-size: .74rem; text-transform: uppercase; color: var(--rp-muted); font-weight: 600; }
+    .rp-table .num { text-align: right; white-space: nowrap; }
+    .rp-table tfoot td { border-bottom: none; font-weight: 700; }
+    .rp-table tr:last-child td { border-bottom: none; }
+    .rp-table-wrap { overflow-x: auto; }
+    .rp-muted { color: var(--rp-muted); }
+    .rp-selected td { background: var(--rp-soft); font-weight: 600; }
+
+    .rp-order { border: 1px solid var(--rp-line); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+    .rp-order.rp-cancelled { opacity: .6; }
+    .rp-order header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .rp-time { color: var(--rp-muted); font-size: .85rem; margin-left: 8px; }
+    .rp-meta { font-size: .88rem; color: var(--rp-muted); margin-bottom: 8px; }
+    .rp-note { font-size: .86rem; margin-bottom: 8px; font-style: italic; }
+    .rp-empty { color: var(--rp-muted); margin: 0; }
+</style>
+
+<div class="rp">
+
+    <div class="rp-bar">
+        <a class="rp-btn rp-btn-ghost" href="?date={{ prev_day|date:'Y-m-d' }}">← Hôm trước</a>
+        <form method="get">
+            <input type="date" name="date" value="{{ day|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" onchange="this.form.submit()">
+        </form>
+        {% if next_day %}
+            <a class="rp-btn rp-btn-ghost" href="?date={{ next_day|date:'Y-m-d' }}">Hôm sau →</a>
+        {% else %}
+            <span class="rp-btn rp-btn-ghost rp-btn-off">Hôm sau →</span>
+        {% endif %}
+        <a class="rp-btn {% if is_today %}rp-btn-off{% endif %}" href="{% url 'admin:orders_order_report' %}">Hôm nay</a>
+    </div>
+
+    <h2 class="rp-title">
+        {{ day|date:"l, d/m/Y" }}
+        {% if is_today %}<small>(hôm nay – tự bắt đầu lại từ 0 mỗi ngày mới)</small>{% endif %}
+    </h2>
+
+    <div class="rp-stats">
+        <div class="rp-card rp-hl">
+            <span class="lbl">Doanh thu</span>
+            <strong>{{ report.revenue|vnd }}</strong>
+            <span class="sub">không tính đơn đã hủy</span>
+        </div>
+        <div class="rp-card">
+            <span class="lbl">Số đơn</span>
+            <strong>{{ report.order_count }}</strong>
+            <span class="sub">đơn hợp lệ trong ngày</span>
+        </div>
+        <div class="rp-card">
+            <span class="lbl">Số bánh đã bán</span>
+            <strong>{{ report.items_sold }}</strong>
+            <span class="sub">tổng số lượng</span>
+        </div>
+        <div class="rp-card">
+            <span class="lbl">Đơn đã hủy</span>
+            <strong>{{ report.cancelled_count }}</strong>
+            <span class="sub">không tính vào doanh thu</span>
+        </div>
+    </div>
+
+    <div class="rp-chips">
+        {% for s in report.status_rows %}
+            {% if s.count %}<span class="rp-st rp-st-{{ s.value }}">{{ s.label }}: {{ s.count }}</span>{% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="rp-section">
+        <h3 class="rp-title">Chi tiết các đơn hàng <small>{{ report.orders|length }} đơn</small></h3>
+        {% for o in report.orders %}
+            <article class="rp-order {% if o.status == 'cancelled' %}rp-cancelled{% endif %}">
+                <header>
+                    <div>
+                        <strong>Đơn <a href="{% url 'admin:orders_order_change' o.pk %}">#{{ o.pk }}</a></strong>
+                        <span class="rp-time">{{ o.created_at|date:"H:i" }}</span>
+                    </div>
+                    <span class="rp-st rp-st-{{ o.status }}">{{ o.get_status_display }}</span>
+                </header>
+                <div class="rp-meta">
+                    {{ o.full_name }} · {{ o.phone }} · {{ o.address }} · {{ o.get_payment_method_display }}
+                </div>
+                {% if o.note %}<div class="rp-note">Ghi chú: {{ o.note }}</div>{% endif %}
+                <div class="rp-table-wrap">
+                    <table class="rp-table">
+                        <thead>
+                            <tr><th>Sản phẩm</th><th class="num">Đơn giá</th><th class="num">SL</th><th class="num">Thành tiền</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for it in o.items.all %}
+                                <tr>
+                                    <td>{{ it.product_name }}</td>
+                                    <td class="num">{{ it.price|vnd }}</td>
+                                    <td class="num">{{ it.quantity }}</td>
+                                    <td class="num">{{ it.subtotal|vnd }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr><td colspan="3" class="num">Tổng đơn</td><td class="num">{{ o.total|vnd }}</td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </article>
+        {% empty %}
+            <p class="rp-empty">Ngày này chưa có đơn hàng nào.</p>
+        {% endfor %}
+    </div>
+
+    {% if report.product_rows %}
+        <div class="rp-section">
+            <h3 class="rp-title">Bánh bán được trong ngày</h3>
+            <div class="rp-table-wrap">
+                <table class="rp-table">
+                    <thead><tr><th>Sản phẩm</th><th class="num">Số lượng</th><th class="num">Doanh thu</th></tr></thead>
+                    <tbody>
+                        {% for p in report.product_rows %}
+                            <tr><td>{{ p.name }}</td><td class="num">{{ p.quantity }}</td><td class="num">{{ p.revenue|vnd }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="rp-section">
+        <h3 class="rp-title">
+            Doanh thu từng ngày <small>{{ history.days }} ngày gần nhất – bấm vào ngày để xem chi tiết</small>
+        </h3>
+        <div class="rp-table-wrap">
+            <table class="rp-table">
+                <thead>
+                    <tr><th>Ngày</th><th class="num">Số đơn</th><th class="num">Đã hủy</th><th class="num">Doanh thu</th></tr>
+                </thead>
+                <tbody>
+                    {% for h in history.rows %}
+                        <tr class="{% if h.date == day %}rp-selected{% endif %}">
+                            <td><a href="?date={{ h.date|date:'Y-m-d' }}">{{ h.date|date:"d/m/Y" }}</a></td>
+                            <td class="num">{% if h.orders %}{{ h.orders }}{% else %}<span class="rp-muted">—</span>{% endif %}</td>
+                            <td class="num">{% if h.cancelled %}{{ h.cancelled }}{% else %}<span class="rp-muted">—</span>{% endif %}</td>
+                            <td class="num">{% if h.revenue %}{{ h.revenue|vnd }}{% else %}<span class="rp-muted">—</span>{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Tổng {{ history.days }} ngày</td>
+                        <td class="num">{{ history.total_orders }}</td>
+                        <td></td>
+                        <td class="num">{{ history.total_revenue|vnd }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

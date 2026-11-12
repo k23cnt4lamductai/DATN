@@ -1,0 +1,141 @@
+{% extends "admin/index.html" %}
+{% load dashboard_tags vnd %}
+
+{% block content_title %}Tổng quan{% endblock %}
+
+{% block content %}
+{% dashboard_data as d %}
+<style>
+    .dz { color: #5a3e36; margin-bottom: 28px; }
+    .dz a { text-decoration: none; }
+    .dz-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .dz-btn { display: inline-block; padding: 9px 20px; border-radius: 999px; font-weight: 600; font-size: .92rem;
+              background: #e8728f; color: #fff !important; border: 1px solid #e8728f; transition: .15s; }
+    .dz-btn:hover { background: #c9506f; border-color: #c9506f; }
+    .dz-btn-ghost { background: #fff; color: #c9506f !important; }
+    .dz-btn-ghost:hover { background: #fdeef2; }
+    .dz-stats { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-bottom: 18px; }
+    .dz-card { background: #fff; border: 1px solid #f0e2dc; border-radius: 14px; padding: 18px 20px;
+               box-shadow: 0 2px 8px rgba(90,62,54,.06); display: flex; flex-direction: column; gap: 4px; color: inherit; }
+    .dz-card .dz-label { font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; color: #8d7b75; }
+    .dz-card strong { font-size: 1.6rem; line-height: 1.2; color: #c9506f; }
+    .dz-card .dz-sub { font-size: .85rem; color: #8d7b75; }
+    .dz-accent { background: linear-gradient(135deg, #fdeef2, #fff3e6); }
+    .dz-warn strong { color: #d64545; }
+    a.dz-card:hover { border-color: #e8728f; box-shadow: 0 6px 16px rgba(201,80,111,.14); }
+    .dz-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; margin-bottom: 18px; }
+    .dz-panel { background: #fff; border: 1px solid #f0e2dc; border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(90,62,54,.06); }
+    .dz-panel h3 { font-size: 1.05rem; margin: 0 0 14px; font-weight: 700; color: #5a3e36; }
+    .dz-panel h3 small { font-weight: 400; color: #8d7b75; margin-left: 6px; }
+    .dz-chart { display: flex; gap: 10px; align-items: flex-end; }
+    .dz-col { flex: 1; text-align: center; min-width: 0; }
+    .dz-barwrap { height: 140px; display: flex; align-items: flex-end; justify-content: center; }
+    .dz-bar { width: 70%; background: linear-gradient(180deg, #e8728f, #f4a5b8); border-radius: 8px 8px 0 0; }
+    .dz-bar-zero { width: 70%; height: 2px; background: #f0e2dc; }
+    .dz-day { display: block; margin-top: 6px; font-size: .78rem; color: #8d7b75; }
+    .dz-val { display: block; font-size: .78rem; font-weight: 600; color: #c9506f; }
+    .dz-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    .dz-table td, .dz-table th { padding: 8px 6px; border-bottom: 1px solid #f6ece7; text-align: left; }
+    .dz-table th { font-size: .75rem; text-transform: uppercase; color: #8d7b75; font-weight: 600; }
+    .dz-table tr:last-child td { border-bottom: none; }
+    .dz-table .num { text-align: right; white-space: nowrap; }
+    .dz-st { display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+    .dz-st-pending { background: #fff6e0; color: #8a5a00; }
+    .dz-st-confirmed { background: #eef4fb; color: #2c5282; }
+    .dz-st-delivering { background: #f0eafc; color: #5b3aa6; }
+    .dz-st-completed { background: #eaf7ef; color: #1f6b41; }
+    .dz-st-cancelled { background: #fdecec; color: #a02727; }
+    .dz-low { color: #d64545; font-weight: 700; }
+    .dz-empty { color: #8d7b75; font-size: .9rem; margin: 0; }
+    .dz-note { font-size: .78rem; color: #8d7b75; margin-top: 10px; }
+    @media (max-width: 900px) { .dz-grid { grid-template-columns: 1fr; } }
+</style>
+
+<section class="dz">
+    <div class="dz-toolbar">
+        <a class="dz-btn" href="{% url 'products:home' %}">🏠 Về trang chủ website</a>
+        <a class="dz-btn" href="{% url 'admin:orders_order_report' %}">📊 Báo cáo doanh thu theo ngày</a>
+        <a class="dz-btn dz-btn-ghost" href="{% url 'admin:orders_order_changelist' %}">Quản lý đơn hàng</a>
+        <a class="dz-btn dz-btn-ghost" href="{% url 'admin:products_product_changelist' %}">Quản lý sản phẩm</a>
+    </div>
+
+    <div class="dz-stats">
+        <div class="dz-card dz-accent">
+            <span class="dz-label">Doanh thu hôm nay</span>
+            <strong>{{ d.revenue_today|vnd }}</strong>
+            <span class="dz-sub">{{ d.orders_today }} đơn</span>
+        </div>
+        <div class="dz-card">
+            <span class="dz-label">Doanh thu tháng này</span>
+            <strong>{{ d.revenue_month|vnd }}</strong>
+            <span class="dz-sub">{{ d.orders_month }} đơn</span>
+        </div>
+        <a class="dz-card" href="{% url 'admin:orders_order_changelist' %}?status__exact=pending">
+            <span class="dz-label">Chờ xác nhận</span>
+            <strong>{{ d.pending }}</strong>
+            <span class="dz-sub">đơn cần xử lý →</span>
+        </a>
+        <a class="dz-card {% if d.low_stock_count %}dz-warn{% endif %}" href="{% url 'admin:products_product_changelist' %}?stock__lte={{ d.low_stock_limit }}">
+            <span class="dz-label">Sắp hết hàng</span>
+            <strong>{{ d.low_stock_count }}</strong>
+            <span class="dz-sub">sản phẩm tồn ≤ {{ d.low_stock_limit }} →</span>
+        </a>
+    </div>
+
+    <div class="dz-panel" style="margin-bottom:18px;">
+        <h3>Doanh thu 7 ngày gần nhất <small>tổng {{ d.week_total|vnd }} – bấm vào cột để xem chi tiết ngày</small></h3>
+        <div class="dz-chart">
+            {% for c in d.chart %}
+                <a class="dz-col" href="{% url 'admin:orders_order_report' %}?date={{ c.iso }}" title="{{ c.label }}: {{ c.value|vnd }} – bấm để xem chi tiết">
+                    <div class="dz-barwrap">
+                        {% if c.height %}<div class="dz-bar" style="height: {{ c.height }}%"></div>{% else %}<div class="dz-bar-zero"></div>{% endif %}
+                    </div>
+                    <span class="dz-val">{{ c.short }}</span>
+                    <span class="dz-day">{{ c.label }}</span>
+                </a>
+            {% endfor %}
+        </div>
+        <p class="dz-note">Doanh thu không tính các đơn đã hủy.</p>
+    </div>
+
+    <div class="dz-grid">
+        <div class="dz-panel">
+            <h3>Đơn hàng mới nhất</h3>
+            {% if d.recent_orders %}
+                <table class="dz-table">
+                    <tr><th>Đơn</th><th>Khách</th><th>Trạng thái</th><th class="num">Tổng</th></tr>
+                    {% for o in d.recent_orders %}
+                        <tr>
+                            <td><a href="{% url 'admin:orders_order_change' o.pk %}">#{{ o.pk }}</a></td>
+                            <td>{{ o.full_name }}</td>
+                            <td><span class="dz-st dz-st-{{ o.status }}">{{ o.get_status_display }}</span></td>
+                            <td class="num">{{ o.total|vnd }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p class="dz-empty">Chưa có đơn hàng nào.</p>
+            {% endif %}
+        </div>
+
+        <div class="dz-panel">
+            <h3>Bánh sắp hết hàng <small>tồn ≤ {{ d.low_stock_limit }}</small></h3>
+            {% if d.low_stock %}
+                <table class="dz-table">
+                    <tr><th>Sản phẩm</th><th class="num">Tồn kho</th></tr>
+                    {% for p in d.low_stock %}
+                        <tr>
+                            <td><a href="{% url 'admin:products_product_change' p.pk %}">{{ p.name }}</a></td>
+                            <td class="num dz-low">{{ p.stock }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p class="dz-empty">Tất cả sản phẩm đều còn đủ hàng 🎉</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{{ block.super }}
+{% endblock %}

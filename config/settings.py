@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+       'jazzmin',
        'django.contrib.admin',
        'django.contrib.auth',
        'django.contrib.contenttypes',
@@ -136,5 +138,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
+    },  
 }
+# Giao diện trang quản trị (django-jazzmin)
+from .admin_theme import JAZZMIN_SETTINGS, JAZZMIN_UI_TWEAKS  # noqa
