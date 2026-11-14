@@ -1,22 +1,16 @@
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 
 from django import template
 from django.db.models import Sum
 from django.utils import timezone
 
 from orders.models import Order
+from orders.reports import day_range
 from products.models import Product
 
 register = template.Library()
 
 LOW_STOCK = 5  # tồn kho <= số này thì cảnh báo sắp hết
-
-
-def _day_range(day):
-    """[00:00 ngày đó, 00:00 ngày hôm sau) theo múi giờ của project.
-    Dùng khoảng thời gian thay vì __date để không phụ thuộc bảng múi giờ của MySQL."""
-    start = timezone.make_aware(datetime.combine(day, time.min))
-    return start, start + timedelta(days=1)
 
 
 def _short_money(value):
@@ -36,14 +30,14 @@ def dashboard_data():
     def revenue(qs):
         return qs.aggregate(s=Sum("total"))["s"] or 0
 
-    t0, t1 = _day_range(today)
-    m0, _ = _day_range(today.replace(day=1))
+    t0, t1 = day_range(today)
+    m0, _ = day_range(today.replace(day=1))
     today_qs = valid.filter(created_at__gte=t0, created_at__lt=t1)
     month_qs = valid.filter(created_at__gte=m0, created_at__lt=t1)
 
     # Doanh thu 7 ngày gần nhất (1 truy vấn, gom theo ngày bằng Python)
     by_day = {today - timedelta(days=i): 0 for i in range(6, -1, -1)}
-    w0, _ = _day_range(today - timedelta(days=6))
+    w0, _ = day_range(today - timedelta(days=6))
     for created, total in valid.filter(created_at__gte=w0, created_at__lt=t1).values_list("created_at", "total"):
         day = timezone.localtime(created).date()
         if day in by_day:

@@ -26,3 +26,7 @@ db.sqlite3
 # System
 .DS_Store
 Thumbs.db
+
+# them boi chuyen_cau_truc.ps1
+*.pyc
+*.sqlite3

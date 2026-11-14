@@ -1,0 +1,77 @@
+/* ===== Thành phần dùng chung: nút, thông báo, menu tài khoản, sao đánh giá ===== */
+:root { --ok: #2e8b57; --danger: #d64545; }
+
+/* ---------- Header: nút giỏ hàng ---------- */
+.cart-link {
+    position: relative; font-weight: 600; padding: 9px 16px;
+    border: 1px solid var(--line); border-radius: 999px; background: #fff; transition: .15s;
+}
+.cart-link:hover { border-color: var(--pink); color: var(--pink-dark); }
+.cart-badge {
+    display: inline-block; min-width: 22px; padding: 0 6px; margin-left: 4px;
+    text-align: center; font-size: .78rem; line-height: 22px;
+    background: var(--pink); color: #fff; border-radius: 999px;
+}
+
+/* ---------- Thông báo ---------- */
+.messages { padding-top: 16px; display: grid; gap: 8px; }
+.msg { padding: 12px 18px; border-radius: 12px; font-size: .94rem; border: 1px solid transparent; }
+.msg a { font-weight: 700; margin-left: 8px; text-decoration: underline; }
+.msg-success { background: #eaf7ef; border-color: #bfe3cd; color: #1f6b41; }
+.msg-info    { background: #eef4fb; border-color: #cddcf0; color: #2c5282; }
+.msg-warning { background: #fff6e0; border-color: #f2dba0; color: #8a5a00; }
+.msg-error   { background: #fdecec; border-color: #f3c3c3; color: #a02727; }
+
+/* ---------- Nút ---------- */
+.btn {
+    display: inline-block; padding: 11px 24px; font-size: .96rem; font-weight: 600;
+    background: var(--pink); color: #fff; border: 1px solid var(--pink);
+    border-radius: 999px; cursor: pointer; text-align: center; transition: .15s;
+}
+.btn:hover { background: var(--pink-dark); border-color: var(--pink-dark); }
+.btn:disabled { background: #e5dcd8; border-color: #e5dcd8; color: #a99d98; cursor: not-allowed; }
+.btn-outline { background: #fff; color: var(--pink-dark); }
+.btn-outline:hover { background: var(--pink-soft); color: var(--pink-dark); }
+.btn-block { display: block; width: 100%; }
+.btn-small { padding: 6px 14px; font-size: .85rem; }
+.card .btn { margin-top: 10px; padding: 9px 16px; }
+.card .info h3 a:hover { color: var(--pink-dark); }
+
+/* ---------- Header: tài khoản ---------- */
+.header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.auth-link { padding: 9px 16px; font-weight: 600; border-radius: 999px; border: 1px solid var(--line); background: #fff; transition: .15s; }
+.auth-link:hover { border-color: var(--pink); color: var(--pink-dark); }
+.auth-link-solid { background: var(--pink); border-color: var(--pink); color: #fff; }
+.auth-link-solid:hover { background: var(--pink-dark); border-color: var(--pink-dark); color: #fff; }
+.user-menu { position: relative; }
+.user-menu summary {
+    list-style: none; cursor: pointer; padding: 9px 16px; font-weight: 600;
+    border: 1px solid var(--line); border-radius: 999px; background: #fff; user-select: none;
+}
+.user-menu summary::-webkit-details-marker { display: none; }
+.user-menu summary:hover, .user-menu[open] summary { border-color: var(--pink); color: var(--pink-dark); }
+.user-menu .menu {
+    position: absolute; right: 0; top: calc(100% + 8px); min-width: 190px; z-index: 20;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px;
+    box-shadow: 0 10px 24px rgba(90, 62, 54, .12);
+}
+.user-menu .menu a, .user-menu .menu button {
+    display: block; width: 100%; text-align: left; padding: 10px 14px; font-size: .94rem;
+    background: none; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: inherit;
+}
+.user-menu .menu a:hover, .user-menu .menu button:hover { background: var(--pink-soft); color: var(--pink-dark); }
+
+/* ---------- Sao đánh giá ---------- */
+.stars {
+    --rating: 0; display: inline-block; font-size: 1rem; line-height: 1; vertical-align: middle;
+    background: linear-gradient(90deg, #f5a623 calc(var(--rating) / 5 * 100%), #e6dad5 0);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+}
+.stars::before { content: "★★★★★"; }
+.stars-lg { font-size: 1.6rem; }
+.rating-line { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); }
+.rating-link { margin-bottom: 8px; font-size: .92rem; }
+.rating-link:hover { color: var(--pink-dark); }
+.small { font-size: .85rem; }
+.login-link { color: var(--pink-dark); font-weight: 600; text-decoration: underline; }

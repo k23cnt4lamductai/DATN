@@ -59,8 +59,8 @@ JAZZMIN_SETTINGS = {
     "default_icon_children": "fas fa-circle",
 
     # --- Màu hồng - kem giống website (file CSS riêng) ---
-    "custom_css": "products/css/admin_custom.css",
-    "custom_js": "products/js/admin_theme.js",   # nút đổi giao diện sáng / tối
+    "custom_css": "core/css/admin_custom.css",
+    "custom_js": "core/js/admin_theme.js",   # nút đổi giao diện sáng / tối
 
     "changeform_format": "single",
 }
