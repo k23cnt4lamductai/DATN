@@ -130,3 +130,61 @@ body.dark-mode .dz-panel h3 { color: var(--dk-text); }
 body.dark-mode .dz-table td, body.dark-mode .dz-table th { border-color: var(--dk-line); }
 body.dark-mode .dz-bar-zero { background: var(--dk-line); }
 body.dark-mode .dz-btn-ghost { background: transparent; color: var(--dk-text); border-color: var(--dk-line); }
+
+/* =====================================================================
+   Nâng cấp admin: ô nhập số đều, nhãn màu, nút thao tác
+   ===================================================================== */
+
+/* ---- Danh sách sửa nhanh (giá, tồn kho): ô nhập đều nhau, canh giữa theo hàng ---- */
+#result_list td, #result_list th { vertical-align: middle !important; }
+#result_list .bn-num, .bn-num {
+    display: block; box-sizing: border-box; width: 130px !important; max-width: 100%; height: 38px;
+    margin-left: 0; padding: 6px 12px; text-align: right; font-size: .95rem;
+    border: 1px solid var(--line); border-radius: 10px; background-color: #fff; color: var(--brown);
+}
+.bn-num:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 .2rem rgba(232, 114, 143, .2); }
+body.dark-mode .bn-num { background-color: #1f1c25; color: var(--dk-text); border-color: var(--dk-line); }
+
+/* ---- Nhãn màu (trạng thái đơn hàng, tình trạng kho) ---- */
+.bn-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+.bn-st-pending    { background: #fff6e0; color: #8a5a00; }
+.bn-st-confirmed  { background: #eef4fb; color: #2c5282; }
+.bn-st-delivering { background: #f0eafc; color: #5b3aa6; }
+.bn-st-completed  { background: #eaf7ef; color: #1f6b41; }
+.bn-st-cancelled  { background: #fdecec; color: #a02727; }
+.bn-st-ok         { background: #eaf7ef; color: #1f6b41; }
+.bn-st-low        { background: #fff6e0; color: #8a5a00; }
+.bn-st-out        { background: #fdecec; color: #a02727; }
+body.dark-mode .bn-st-pending, body.dark-mode .bn-st-low { background: #3d3217; color: #f2d58a; }
+body.dark-mode .bn-st-confirmed   { background: #1f2d44; color: #9cc3f2; }
+body.dark-mode .bn-st-delivering  { background: #2f2748; color: #c9b4f5; }
+body.dark-mode .bn-st-completed, body.dark-mode .bn-st-ok { background: #1c3a2a; color: #8fdcae; }
+body.dark-mode .bn-st-cancelled, body.dark-mode .bn-st-out { background: #432024; color: #f2a0a6; }
+
+/* ---- Nút nhỏ trong danh sách / trang xác nhận ---- */
+.bn-btn {
+    display: inline-block; padding: 4px 14px; margin: 2px 4px 2px 0; border-radius: 999px;
+    font-size: .8rem; font-weight: 600; line-height: 1.6; cursor: pointer; text-decoration: none;
+    border: 1px solid var(--brand); background: var(--brand); color: #fff !important;
+}
+.bn-btn:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+.bn-btn-ghost { background: transparent; color: var(--brand-dark) !important; }
+.bn-btn-ghost:hover { background: var(--brand-soft); border-color: var(--brand); }
+.bn-btn-danger { background: transparent; border-color: #d64545; color: #d64545 !important; }
+.bn-btn-danger:hover { background: #d64545; border-color: #d64545; color: #fff !important; }
+body.dark-mode .bn-btn-ghost { color: #f19ab0 !important; }
+body.dark-mode .bn-btn-ghost:hover { background: #3a2530; }
+body.dark-mode .bn-btn-danger { color: #f2a0a6 !important; border-color: #a02727; }
+body.dark-mode .bn-btn-danger:hover { background: #a02727; color: #fff !important; }
+
+/* ---- Thanh ngang trong bảng Tổng quan (chế độ tối) ---- */
+body.dark-mode .dz-hbar-track { background: var(--dk-line); }
+body.dark-mode .dz-hbar-val { color: var(--dk-muted); }
+
+/* ---- Thanh menu trên cùng: chữ không xuống dòng, ô tìm kiếm gọn ---- */
+nav.navbar .navbar-nav .nav-link { white-space: nowrap; }
+nav.navbar form { flex: 0 1 auto; min-width: 0; margin-bottom: 0; }
+nav.navbar form input:not([type="hidden"]) { width: 150px !important; max-width: 100%; }
+@media (max-width: 1500px) { nav.navbar form:nth-of-type(2) { display: none; } }   /* màn hình hẹp: chỉ giữ 1 ô tìm */
+@media (max-width: 1250px) { nav.navbar form { display: none; } }                   /* rất hẹp: ẩn ô tìm, dùng menu bên cạnh */
+

@@ -48,6 +48,11 @@
     .dz-low { color: #d64545; font-weight: 700; }
     .dz-empty { color: #8d7b75; font-size: .9rem; margin: 0; }
     .dz-note { font-size: .78rem; color: #8d7b75; margin-top: 10px; }
+    .dz-hbar { display: grid; grid-template-columns: minmax(90px, 1.3fr) 2fr minmax(70px, auto); gap: 10px; align-items: center; margin: 9px 0; font-size: .9rem; }
+    .dz-hbar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dz-hbar-track { height: 10px; background: #f6ece7; border-radius: 999px; overflow: hidden; }
+    .dz-hbar-track i { display: block; height: 100%; background: linear-gradient(90deg, #e8728f, #f4a5b8); border-radius: 999px; }
+    .dz-hbar-val { text-align: right; white-space: nowrap; color: #8d7b75; font-size: .85rem; }
     @media (max-width: 900px) { .dz-grid { grid-template-columns: 1fr; } }
 </style>
 
@@ -55,6 +60,7 @@
     <div class="dz-toolbar">
         <a class="dz-btn" href="{% url 'products:home' %}">🏠 Về trang chủ website</a>
         <a class="dz-btn" href="{% url 'admin:orders_order_report' %}">📊 Báo cáo doanh thu theo ngày</a>
+        <a class="dz-btn" href="{% url 'admin:orders_order_customers' %}">👥 Khách hàng</a>
         <a class="dz-btn dz-btn-ghost" href="{% url 'admin:orders_order_changelist' %}">Quản lý đơn hàng</a>
         <a class="dz-btn dz-btn-ghost" href="{% url 'admin:products_product_changelist' %}">Quản lý sản phẩm</a>
     </div>
@@ -96,6 +102,34 @@
             {% endfor %}
         </div>
         <p class="dz-note">Doanh thu không tính các đơn đã hủy.</p>
+    </div>
+
+    <div class="dz-grid">
+        <div class="dz-panel">
+            <h3>Bánh bán chạy <small>30 ngày gần nhất</small></h3>
+            {% for r in d.top_products %}
+                <div class="dz-hbar" title="{{ r.name }}: {{ r.quantity }} cái – {{ r.revenue|vnd }}">
+                    <span class="dz-hbar-label">{{ r.name }}</span>
+                    <div class="dz-hbar-track"><i style="width: {{ r.percent }}%"></i></div>
+                    <span class="dz-hbar-val">{{ r.quantity }} cái</span>
+                </div>
+            {% empty %}
+                <p class="dz-empty">Chưa có dữ liệu bán hàng.</p>
+            {% endfor %}
+        </div>
+
+        <div class="dz-panel">
+            <h3>Doanh thu theo danh mục <small>30 ngày gần nhất</small></h3>
+            {% for r in d.category_rows %}
+                <div class="dz-hbar" title="{{ r.name }}: {{ r.revenue|vnd }}">
+                    <span class="dz-hbar-label">{{ r.name }}</span>
+                    <div class="dz-hbar-track"><i style="width: {{ r.bar }}%"></i></div>
+                    <span class="dz-hbar-val">{{ r.revenue|vnd }} · {{ r.share }}%</span>
+                </div>
+            {% empty %}
+                <p class="dz-empty">Chưa có dữ liệu bán hàng.</p>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="dz-grid">

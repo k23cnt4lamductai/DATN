@@ -1,0 +1,52 @@
+{% extends "admin/base_site.html" %}
+{% load vnd %}
+
+{% block content %}
+<style>
+    .bn-panel { max-width: 760px; background: #fff; border: 1px solid #f0e2dc; border-radius: 14px; padding: 22px 24px; color: #5a3e36; }
+    body.dark-mode .bn-panel { background: #26232d; border-color: #3a3642; color: #eee6e2; }
+    .bn-panel p.intro { margin-top: 0; }
+    .bn-list { max-height: 220px; overflow: auto; margin: 0 0 18px; padding: 10px 14px 10px 30px; border: 1px solid #f0e2dc; border-radius: 10px; font-size: .92rem; }
+    body.dark-mode .bn-list { border-color: #3a3642; }
+    .bn-field { margin-bottom: 16px; }
+    .bn-field > label { display: block; font-weight: 600; margin-bottom: 6px; }
+    .bn-field input[type=number] { width: 180px; padding: 8px 12px; border: 1px solid #f0e2dc; border-radius: 10px; }
+    .bn-field select { padding: 8px 12px; border-radius: 10px; }
+    .bn-field div[id^="id_"] > div { display: inline-block; margin-right: 18px; }
+    .bn-field div[id^="id_"] label { font-weight: 400; margin-left: 4px; }
+    .bn-error { color: #d64545; font-size: .86rem; margin-top: 4px; }
+    .bn-actions { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+</style>
+
+<div class="bn-panel">
+    <p class="intro">{{ intro }}</p>
+
+    <strong>{{ products|length }} sản phẩm được chọn:</strong>
+    <ul class="bn-list">
+        {% for p in products %}
+            <li>{{ p.name }} – {{ p.price|vnd }} – tồn kho {{ p.stock }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="{{ action_name }}">
+        <input type="hidden" name="apply" value="1">
+        <input type="hidden" name="select_across" value="{{ select_across }}">
+        {% for pk in selected %}<input type="hidden" name="_selected_action" value="{{ pk }}">{% endfor %}
+
+        {% for f in form %}
+            <div class="bn-field">
+                <label>{{ f.label }}</label>
+                {{ f }}
+                {% for e in f.errors %}<div class="bn-error">{{ e }}</div>{% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="bn-actions">
+            <button type="submit" class="bn-btn">Áp dụng</button>
+            <a class="bn-btn bn-btn-ghost" href="{{ cancel_url }}">Hủy bỏ</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

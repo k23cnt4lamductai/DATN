@@ -1,0 +1,94 @@
+{% extends "admin/base_site.html" %}
+{% load vnd %}
+
+{% block content %}
+<style>
+    .cu {
+        --cu-card: #fff; --cu-line: #f0e2dc; --cu-text: #5a3e36; --cu-muted: #8d7b75; --cu-soft: #fdeef2; --cu-brand: #c9506f;
+        color: var(--cu-text); margin-bottom: 30px;
+    }
+    body.dark-mode .cu { --cu-card: #26232d; --cu-line: #3a3642; --cu-text: #eee6e2; --cu-muted: #a89c96; --cu-soft: #3a2530; --cu-brand: #f19ab0; }
+    .cu a { text-decoration: none; }
+    .cu-stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 16px; }
+    .cu-card { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 14px; padding: 16px 18px; }
+    .cu-card .lbl { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--cu-muted); }
+    .cu-card strong { display: block; font-size: 1.5rem; color: var(--cu-brand); line-height: 1.25; }
+    .cu-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+    .cu-bar input[type=text] { padding: 8px 14px; min-width: 260px; border: 1px solid var(--cu-line); border-radius: 999px; background: var(--cu-card); color: var(--cu-text); }
+    .cu-section { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 14px; padding: 8px 20px 16px; }
+    .cu-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    .cu-table th, .cu-table td { padding: 10px 8px; border-bottom: 1px solid var(--cu-line); text-align: left; vertical-align: middle; }
+    .cu-table th { font-size: .74rem; text-transform: uppercase; color: var(--cu-muted); font-weight: 600; }
+    .cu-table .num { text-align: right; white-space: nowrap; }
+    .cu-table tr:last-child td { border-bottom: none; }
+    .cu-wrap { overflow-x: auto; }
+    .cu-muted { color: var(--cu-muted); }
+    .cu-tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+    .cu-member { background: #eaf7ef; color: #1f6b41; }
+    .cu-guest { background: #fff6e0; color: #8a5a00; }
+    .cu-staff { background: #f0eafc; color: #5b3aa6; margin-left: 4px; }
+    .cu-spent { font-weight: 700; color: var(--cu-brand); }
+    .cu-pager { display: flex; gap: 8px; align-items: center; margin-top: 14px; color: var(--cu-muted); }
+    .cu-empty { color: var(--cu-muted); padding: 18px 0 6px; margin: 0; }
+</style>
+
+<div class="cu">
+    <div class="cu-stats">
+        <div class="cu-card"><span class="lbl">Tổng số khách</span><strong>{{ total_customers }}</strong></div>
+        <div class="cu-card"><span class="lbl">Thành viên (có tài khoản)</span><strong>{{ members }}</strong></div>
+        <div class="cu-card"><span class="lbl">Khách vãng lai</span><strong>{{ guests }}</strong></div>
+        <div class="cu-card"><span class="lbl">Tổng chi tiêu</span><strong>{{ total_spent|vnd }}</strong></div>
+    </div>
+
+    <form class="cu-bar" method="get">
+        <input type="text" name="q" value="{{ q }}" placeholder="Tìm theo tên, số điện thoại, email...">
+        <button type="submit" class="bn-btn">Tìm</button>
+        {% if q %}<a class="bn-btn bn-btn-ghost" href="{% url 'admin:orders_order_customers' %}">Xóa tìm kiếm</a>{% endif %}
+    </form>
+
+    <div class="cu-section">
+        {% if page.object_list %}
+            <div class="cu-wrap">
+                <table class="cu-table">
+                    <thead>
+                        <tr>
+                            <th>Khách hàng</th><th>Loại</th><th>Điện thoại</th><th>Email</th>
+                            <th class="num">Số đơn</th><th class="num">Tổng chi tiêu</th><th>Đơn gần nhất</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in page.object_list %}
+                            <tr>
+                                <td><strong>{{ r.name }}</strong></td>
+                                <td>
+                                    {% if r.kind == "member" %}<span class="cu-tag cu-member">Thành viên</span>{% else %}<span class="cu-tag cu-guest">Vãng lai</span>{% endif %}
+                                    {% if r.is_staff %}<span class="cu-tag cu-staff">Quản trị</span>{% endif %}
+                                </td>
+                                <td>{% if r.phone %}{{ r.phone }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td>{% if r.email %}{{ r.email }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td class="num">
+                                    {{ r.orders }}{% if r.cancelled %} <span class="cu-muted" title="Đơn đã hủy">(+{{ r.cancelled }} hủy)</span>{% endif %}
+                                </td>
+                                <td class="num">{% if r.spent %}<span class="cu-spent">{{ r.spent|vnd }}</span>{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td>{% if r.last %}{{ r.last|date:"d/m/Y" }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td class="num">{% if r.orders or r.cancelled %}<a class="bn-btn bn-btn-ghost" href="{{ r.orders_url }}">Xem đơn</a>{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if page.paginator.num_pages > 1 %}
+                <div class="cu-pager">
+                    {% if page.has_previous %}<a class="bn-btn bn-btn-ghost" href="?page={{ page.previous_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">← Trước</a>{% endif %}
+                    <span>Trang {{ page.number }} / {{ page.paginator.num_pages }}</span>
+                    {% if page.has_next %}<a class="bn-btn bn-btn-ghost" href="?page={{ page.next_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">Sau →</a>{% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <p class="cu-empty">Không tìm thấy khách hàng nào.</p>
+        {% endif %}
+    </div>
+    <p class="cu-muted" style="margin-top:10px;font-size:.82rem;">Số đơn và tổng chi tiêu không tính các đơn đã hủy. Khách vãng lai (đặt hàng không đăng nhập) được gom theo số điện thoại.</p>
+</div>
+{% endblock %}

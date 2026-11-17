@@ -5,12 +5,11 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from orders.models import Order
-from orders.reports import day_range
+from orders.reports import day_range, revenue_by_category, top_products
+from products.constants import LOW_STOCK
 from products.models import Product
 
 register = template.Library()
-
-LOW_STOCK = 5  # tồn kho <= số này thì cảnh báo sắp hết
 
 
 def _short_money(value):
@@ -68,4 +67,6 @@ def dashboard_data():
         "recent_orders": Order.objects.order_by("-created_at")[:6],
         "chart": chart,
         "week_total": sum(by_day.values()),
+        "top_products": top_products(today, days=30, limit=5),
+        "category_rows": revenue_by_category(today, days=30),
     }

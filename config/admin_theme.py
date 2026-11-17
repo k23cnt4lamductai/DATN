@@ -16,9 +16,10 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "🏠 Về trang chủ", "url": "/"},
         {"name": "Tổng quan", "url": "admin:index"},
-        {"name": "Đơn hàng", "model": "orders.Order"},
-        {"name": "Báo cáo doanh thu", "url": "admin:orders_order_report"},
-        {"name": "Sản phẩm", "model": "products.Product"},
+        {"name": "Đơn hàng", "url": "admin:orders_order_changelist", "permissions": ["orders.view_order"]},
+        {"name": "Báo cáo", "url": "admin:orders_order_report", "permissions": ["orders.view_order"]},
+        {"name": "Khách hàng", "url": "admin:orders_order_customers", "permissions": ["orders.view_order"]},
+        {"name": "Sản phẩm", "url": "admin:products_product_changelist", "permissions": ["products.view_product"]},
     ],
     "usermenu_links": [
         {"name": "Về trang chủ website", "url": "/"},
@@ -51,6 +52,12 @@ JAZZMIN_SETTINGS = {
                 "name": "Báo cáo doanh thu",
                 "url": "admin:orders_order_report",
                 "icon": "fas fa-chart-line",
+                "permissions": ["orders.view_order"],
+            },
+            {
+                "name": "Khách hàng",
+                "url": "admin:orders_order_customers",
+                "icon": "fas fa-user-friends",
                 "permissions": ["orders.view_order"],
             },
         ],

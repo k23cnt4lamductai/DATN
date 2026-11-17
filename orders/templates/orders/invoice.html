@@ -1,0 +1,78 @@
+{% load vnd %}<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hóa đơn #{{ order.pk }}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: "Segoe UI", Arial, sans-serif; color: #222; max-width: 720px; margin: 24px auto; padding: 0 16px; font-size: 14px; }
+        .bar { display: flex; gap: 10px; margin-bottom: 18px; }
+        .bar button, .bar a { padding: 8px 18px; border-radius: 999px; border: 1px solid #e8728f; background: #e8728f; color: #fff; font-size: 14px; cursor: pointer; text-decoration: none; }
+        .bar a { background: #fff; color: #c9506f; }
+        .head { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 12px; margin-bottom: 14px; }
+        .head h1 { margin: 0; font-size: 26px; color: #c9506f; }
+        .head p { margin: 4px 0 0; color: #666; letter-spacing: .08em; }
+        .cancelled { text-align: center; color: #a02727; font-weight: 700; font-size: 18px; margin: 0 0 10px; }
+        .meta { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; margin: 0 0 14px; }
+        .meta dt { color: #666; }
+        .meta dd { margin: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        th, td { padding: 7px 6px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { font-size: 12px; text-transform: uppercase; color: #666; }
+        .num { text-align: right; white-space: nowrap; }
+        tfoot td { border-bottom: none; font-weight: 700; font-size: 16px; }
+        .thanks { text-align: center; margin-top: 22px; color: #666; border-top: 2px dashed #ccc; padding-top: 12px; }
+        @media print { .bar { display: none; } body { margin: 0 auto; } }
+    </style>
+</head>
+<body>
+    <div class="bar">
+        <button type="button" onclick="window.print()">🖨 In hóa đơn</button>
+        <a href="javascript:window.close()">Đóng</a>
+    </div>
+
+    <div class="head">
+        <h1>🧁 Tiệm Bánh Ngọt</h1>
+        <p>HÓA ĐƠN BÁN HÀNG</p>
+    </div>
+
+    {% if order.status == "cancelled" %}<p class="cancelled">ĐƠN ĐÃ HỦY</p>{% endif %}
+
+    <dl class="meta">
+        <dt>Mã đơn</dt><dd>#{{ order.pk }}</dd>
+        <dt>Ngày đặt</dt><dd>{{ order.created_at|date:"d/m/Y H:i" }}</dd>
+        <dt>Khách hàng</dt><dd>{{ order.full_name }}</dd>
+        <dt>Điện thoại</dt><dd>{{ order.phone }}</dd>
+        <dt>Địa chỉ</dt><dd>{{ order.address }}</dd>
+        {% if order.delivery_date %}<dt>Ngày nhận</dt><dd>{{ order.delivery_date|date:"d/m/Y" }}</dd>{% endif %}
+        <dt>Thanh toán</dt><dd>{{ order.get_payment_method_display }}</dd>
+        <dt>Trạng thái</dt><dd>{{ order.get_status_display }}</dd>
+        {% if order.note %}<dt>Ghi chú</dt><dd>{{ order.note }}</dd>{% endif %}
+    </dl>
+
+    <table>
+        <thead>
+            <tr><th>STT</th><th>Sản phẩm</th><th class="num">Đơn giá</th><th class="num">SL</th><th class="num">Thành tiền</th></tr>
+        </thead>
+        <tbody>
+            {% for it in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ it.product_name }}</td>
+                    <td class="num">{{ it.price|vnd }}</td>
+                    <td class="num">{{ it.quantity }}</td>
+                    <td class="num">{{ it.subtotal|vnd }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr><td colspan="4" class="num">Tổng cộng</td><td class="num">{{ order.total|vnd }}</td></tr>
+        </tfoot>
+    </table>
+
+    <p class="thanks">Cảm ơn quý khách – hẹn gặp lại!</p>
+
+    {% if auto_print %}<script>window.addEventListener("load", function () { window.print(); });</script>{% endif %}
+</body>
+</html>
