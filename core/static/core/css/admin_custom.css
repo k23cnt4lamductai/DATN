@@ -188,3 +188,6 @@ nav.navbar form input:not([type="hidden"]) { width: 150px !important; max-width:
 @media (max-width: 1500px) { nav.navbar form:nth-of-type(2) { display: none; } }   /* màn hình hẹp: chỉ giữ 1 ô tìm */
 @media (max-width: 1250px) { nav.navbar form { display: none; } }                   /* rất hẹp: ẩn ô tìm, dùng menu bên cạnh */
 
+/* ---- Lúc vừa tải trang: áp dụng trạng thái menu bên cạnh mà không chạy hiệu ứng trượt ---- */
+body.bn-no-anim, body.bn-no-anim * { transition: none !important; animation-duration: 0s !important; }
+

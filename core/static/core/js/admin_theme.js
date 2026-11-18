@@ -6,6 +6,55 @@
     "use strict";
     var KEY = "bn-admin-theme";
 
+    /* ---------- 0. Nhớ trạng thái menu bên cạnh (thu gọn / mở) khi chuyển trang ---------- */
+    var SIDEBAR_KEY = "bn-sidebar";
+    var userToggledSidebar = false;
+
+    function isDesktop() { return window.innerWidth >= 992; }
+
+    function applySidebar() {
+        if (userToggledSidebar || !isDesktop() || !document.body) { return; }
+        var state = null;
+        try { state = localStorage.getItem(SIDEBAR_KEY); } catch (e) { return; }
+        if (state === "collapsed" || state === "open") {
+            document.body.classList.add("bn-no-anim");            // tắt hiệu ứng trượt khi vừa tải trang
+            document.body.classList.toggle("sidebar-collapse", state === "collapsed");
+            setTimeout(function () { document.body.classList.remove("bn-no-anim"); }, 1500);   // chốt an toàn
+        }
+    }
+
+    function saveSidebar() {
+        if (!isDesktop() || !document.body) { return; }
+        try {
+            localStorage.setItem(SIDEBAR_KEY, document.body.classList.contains("sidebar-collapse") ? "collapsed" : "open");
+        } catch (e) {}
+    }
+
+    function initSidebarMemory() {
+        applySidebar();
+        setTimeout(applySidebar, 300);                            // phòng khi thư viện giao diện đặt lại trạng thái muộn
+        function endNoAnim() {
+            setTimeout(function () { document.body.classList.remove("bn-no-anim"); }, 150);
+        }
+        if (document.readyState === "complete") {
+            endNoAnim();
+        } else {
+            window.addEventListener("load", function () { applySidebar(); endNoAnim(); });
+        }
+        document.addEventListener("click", function (e) {
+            var hit = e.target && e.target.closest
+                ? e.target.closest('[data-widget="pushmenu"], [data-lte-toggle="sidebar"], [data-bs-toggle="sidebar"]')
+                : null;
+            if (hit) {
+                userToggledSidebar = true;
+                document.body.classList.remove("bn-no-anim");
+                setTimeout(saveSidebar, 450);                     // đợi hiệu ứng đóng / mở xong rồi mới lưu
+            }
+        });
+        window.addEventListener("pagehide", saveSidebar);         // chuyển trang: lưu trạng thái đang thấy
+        window.addEventListener("beforeunload", saveSidebar);
+    }
+
     /* ---------- 1. Sáng / tối ---------- */
     function saved() {
         try { return localStorage.getItem(KEY) || "light"; } catch (e) { return "light"; }
@@ -23,6 +72,7 @@
         }
     }
     apply(saved());   // áp dụng sớm để tránh nháy trắng khi tải trang
+    applySidebar();   // áp dụng sớm trạng thái menu bên cạnh đã lưu
 
     function findNavbarList() {
         var nav = document.querySelector("nav.navbar") || document.querySelector(".main-header, .app-header");
@@ -118,6 +168,7 @@
     }
 
     function init() {
+        initSidebarMemory();
         initThemeToggle();
         initPostButtons();
         translateTexts();
