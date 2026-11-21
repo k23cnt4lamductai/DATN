@@ -1,14 +1,36 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<section class="hero">
-    <div class="container">
-        <h1>Bánh ngọt tươi mỗi ngày</h1>
-        <p>Làm thủ công từ nguyên liệu chọn lọc – ngọt vừa, thơm lâu.</p>
+{% load shop_tags %}{% shop_info as shop %}
+<section class="hero{% if shop.hero_image %} hero-image{% endif %}"{% if shop.hero_image %} style="background-image: url('{{ shop.hero_image }}')"{% endif %}>
+    <div class="container hero-inner">
+        <div class="hero-text">
+            <span class="hero-kicker">🍰 Tươi ngon mỗi ngày</span>
+            <h1>{{ shop.tagline }}</h1>
+            <p>{{ shop.slogan }}</p>
+            <div class="hero-actions">
+                <a class="btn" href="#san-pham">Xem bánh ngay</a>
+                <a class="btn btn-outline" href="{% url 'core:about' %}">Về chúng tôi</a>
+            </div>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span>🎂</span><span>🧁</span><span>🍰</span></div>
     </div>
 </section>
 
-<main class="container">
+{% if shop.promos %}
+    <div class="container">
+        <div class="perks">
+            {% for p in shop.promos %}
+                <div class="perk">
+                    <span class="perk-icon">{{ p.icon }}</span>
+                    <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+<main class="container" id="san-pham">
 
     <nav class="categories">
         <a class="cat {% if not current_category %}active{% endif %}"

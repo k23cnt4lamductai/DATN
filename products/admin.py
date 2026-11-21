@@ -6,7 +6,7 @@ from django.utils.html import format_html
 
 from .admin_forms import DiscountForm, RestockForm
 from .constants import LOW_STOCK
-from .models import Category, Product, Review
+from .models import Category, Ingredient, Product, ProductIngredient, Review
 from .pricing import calc_new_price
 
 
@@ -37,8 +37,23 @@ class StockFilter(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ("name", "unit", "is_allergen", "note")
+    list_editable = ("is_allergen",)
+    list_filter = ("is_allergen", "unit")
+    search_fields = ("name",)
+
+
+class ProductIngredientInline(admin.TabularInline):
+    model = ProductIngredient
+    extra = 1
+    autocomplete_fields = ("ingredient",)
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductIngredientInline]
     list_display = ("thumb", "name", "category", "price", "stock", "stock_badge", "is_available", "rating_info")
     list_display_links = ("thumb", "name")
     list_editable = ("price", "stock", "is_available")   # sửa nhanh ngay trên danh sách

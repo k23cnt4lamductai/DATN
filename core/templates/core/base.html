@@ -1,18 +1,32 @@
-{% load static cart_tags %}<!DOCTYPE html>
-<html lang="vi">
+{% load static cart_tags shop_tags %}{% shop_info as shop %}<!DOCTYPE html>
+<html lang="vi" data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Tiệm Bánh Ngọt{% endblock %}</title>
+    <title>{% block title %}{{ shop.name }}{% endblock %}</title>
+    <script>
+        /* Áp dụng giao diện sáng / tối đã chọn ngay từ đầu để không bị nháy màu */
+        (function () {
+            try {
+                var t = localStorage.getItem("bn-shop-theme");
+                if (t === "dark" || t === "light") { document.documentElement.setAttribute("data-theme", t); }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/components.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/pages.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/pages.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'core/css/shop.css' %}">
 </head>
 <body>
 
+{% if shop.announcement %}<div class="announce">{{ shop.announcement }}</div>{% endif %}
+
 <header>
     <div class="container header-inner">
-        <a href="{% url 'products:home' %}" class="logo"> Tiệm Bánh Ngọt</a>
+        <button type="button" class="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-panel">☰</button>
+
+        <a href="{% url 'products:home' %}" class="logo">🧁 {{ shop.name }}</a>
 
         <form class="search" method="get" action="{% url 'products:home' %}">
             {% if current_category %}
@@ -23,9 +37,11 @@
         </form>
 
         <div class="header-actions">
+            <button type="button" class="theme-toggle" id="shop-theme-toggle" aria-label="Đổi giao diện sáng / tối">🌙</button>
+
             {% if user.is_authenticated %}
                 <details class="user-menu">
-                    <summary>👤 {{ user.first_name|default:user.username }}</summary>
+                    <summary>👤 <span class="um-name">{{ user.first_name|default:user.username }}</span></summary>
                     <div class="menu">
                         <a href="{% url 'accounts:orders' %}">Đơn hàng của tôi</a>
                         {% if user.is_staff %}<a href="{% url 'admin:index' %}">Trang quản trị</a>{% endif %}
@@ -40,14 +56,49 @@
                 <a class="auth-link auth-link-solid" href="{% url 'accounts:register' %}">Đăng ký</a>
             {% endif %}
 
-            <a class="cart-link" href="{% url 'orders:cart' %}">
-                🛒 Giỏ hàng
+            <a class="cart-link" href="{% url 'orders:cart' %}" aria-label="Giỏ hàng">
+                🛒 <span class="cart-text">Giỏ hàng</span>
                 {% cart_count as n %}
                 {% if n %}<span class="cart-badge">{{ n }}</span>{% endif %}
             </a>
         </div>
     </div>
+
+    <div class="mobile-panel" id="mobile-panel" hidden>
+        <div class="container">
+            <form class="search" method="get" action="{% url 'products:home' %}">
+                <input type="text" name="q" value="{{ keyword }}" placeholder="Tìm bánh bạn thích...">
+                <button type="submit">Tìm</button>
+            </form>
+            <nav class="mobile-nav" aria-label="Điều hướng">
+                <a href="{% url 'products:home' %}">🏠 Trang chủ</a>
+                <a href="{% url 'core:about' %}">ℹ️ Giới thiệu</a>
+                <a href="{% url 'core:contact' %}">📍 Liên hệ</a>
+                <a href="{% url 'orders:cart' %}">🛒 Giỏ hàng</a>
+            </nav>
+            <div class="mobile-auth">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:orders' %}">📦 Đơn hàng của tôi</a>
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">🚪 Đăng xuất</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}">🔑 Đăng nhập</a>
+                    <a href="{% url 'accounts:register' %}">✨ Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </header>
+
+<nav class="subnav" aria-label="Điều hướng chính">
+    <div class="container main-nav">
+        <a href="{% url 'products:home' %}">Trang chủ</a>
+        <a href="{% url 'core:about' %}">Giới thiệu</a>
+        <a href="{% url 'core:contact' %}">Liên hệ</a>
+    </div>
+</nav>
 
 {% if messages %}
     <div class="container messages">
@@ -62,9 +113,50 @@
 
 {% block content %}{% endblock %}
 
-<footer>
-    <div class="container">© 2026 Tiệm Bánh Ngọt – Đồ án tốt nghiệp</div>
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <a href="{% url 'products:home' %}" class="logo footer-logo">🧁 {{ shop.name }}</a>
+            <p class="footer-muted">{{ shop.slogan }}</p>
+            {% if shop.facebook or shop.zalo or shop.instagram %}
+                <div class="footer-social">
+                    {% if shop.facebook %}<a href="{{ shop.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+                    {% if shop.zalo %}<a href="{{ shop.zalo }}" target="_blank" rel="noopener">Zalo</a>{% endif %}
+                    {% if shop.instagram %}<a href="{{ shop.instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <div>
+            <h4>Liên hệ</h4>
+            <ul>
+                <li>📍 {{ shop.address }}</li>
+                <li>📞 <a href="tel:{{ shop.phone|digits }}">{{ shop.phone }}</a></li>
+                <li>✉️ <a href="mailto:{{ shop.email }}">{{ shop.email }}</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Giờ mở cửa</h4>
+            <ul class="hours">
+                {% for day, time in shop.hours %}
+                    <li><span>{{ day }}</span> <strong>{{ time }}</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h4>Khám phá</h4>
+            <ul>
+                <li><a href="{% url 'products:home' %}">Trang chủ</a></li>
+                <li><a href="{% url 'core:about' %}">Giới thiệu</a></li>
+                <li><a href="{% url 'core:contact' %}">Liên hệ</a></li>
+                <li><a href="{% url 'orders:cart' %}">Giỏ hàng</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">© {% now "Y" %} {{ shop.name }} – Đồ án tốt nghiệp</div>
+    </div>
 </footer>
 
+<script src="{% static 'core/js/shop.js' %}" defer></script>
 </body>
 </html>

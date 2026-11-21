@@ -29,7 +29,7 @@
 .buy-form label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: 6px; }
 .qty {
     width: 90px; padding: 9px 12px; font-size: 1rem; text-align: center;
-    border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
 }
 .qty:focus { outline: none; border-color: var(--pink); }
 .buy-actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
@@ -41,7 +41,7 @@
 .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 28px; align-items: start; }
 
 /* ---------- Bảng giỏ hàng ---------- */
-.table-wrap { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
 .cart-table { width: 100%; border-collapse: collapse; min-width: 560px; }
 .cart-table th, .cart-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .cart-table th { font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--cream); }
@@ -59,7 +59,7 @@
 .link-danger:hover { text-decoration: underline; }
 
 /* ---------- Khung tóm tắt ---------- */
-.summary { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
 .summary h2 { font-size: 1.15rem; margin-bottom: 14px; }
 .summary-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: .95rem; }
 .summary-row.total { border-top: 1px dashed var(--line); margin: 8px 0 18px; padding-top: 14px; font-size: 1.1rem; }
@@ -67,7 +67,7 @@
 .summary .btn { margin-top: 4px; }
 
 /* ---------- Form đặt hàng ---------- */
-.checkout-form { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.checkout-form { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
 .form-row { margin-bottom: 16px; }
 .form-row label { display: block; font-weight: 600; font-size: .92rem; margin-bottom: 6px; }
 .form-row input[type=text], .form-row input[type=email], .form-row input[type=date],
@@ -75,7 +75,7 @@
     width: 100%; padding: 11px 14px; font-size: .96rem; font-family: inherit;
     border: 1px solid var(--line); border-radius: 10px; background: var(--cream);
 }
-.form-row input:focus, .form-row textarea:focus { outline: none; border-color: var(--pink); background: #fff; }
+.form-row input:focus, .form-row textarea:focus { outline: none; border-color: var(--pink); background: var(--surface); }
 .form-row.has-error input, .form-row.has-error textarea { border-color: var(--danger); }
 .field-error { color: var(--danger); font-size: .86rem; margin-top: 5px; }
 .req { color: var(--danger); }
@@ -101,7 +101,7 @@
 /* ---------- Lịch sử đơn hàng ---------- */
 .order-list { display: grid; gap: 14px; }
 .order-card {
-    display: block; background: #fff; border: 1px solid var(--line);
+    display: block; background: var(--surface); border: 1px solid var(--line);
     border-radius: 16px; padding: 18px 20px; transition: .15s;
 }
 .order-card:hover { border-color: var(--pink); box-shadow: 0 6px 16px rgba(201, 80, 111, .1); }
@@ -118,7 +118,7 @@
 .page-title .status { margin-left: 10px; font-size: .8rem; }
 
 /* ---------- Khu vực đánh giá ---------- */
-.reviews { margin-top: 56px; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
+.reviews { margin-top: 56px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
 .reviews h2 { font-size: 1.3rem; margin-bottom: 18px; }
 .review-summary { display: flex; gap: 36px; align-items: center; flex-wrap: wrap; margin-bottom: 22px; }
 .big-score { text-align: center; min-width: 140px; }
@@ -127,7 +127,7 @@
 .bars { flex: 1; min-width: 220px; max-width: 420px; }
 .bar-row { display: flex; align-items: center; gap: 10px; font-size: .85rem; margin: 4px 0; }
 .bar-label { width: 34px; color: var(--muted); }
-.bar { flex: 1; height: 8px; background: #f1e7e2; border-radius: 999px; overflow: hidden; }
+.bar { flex: 1; height: 8px; background: var(--track); border-radius: 999px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: #f5a623; border-radius: 999px; }
 .bar-count { width: 24px; text-align: right; color: var(--muted); }
 
@@ -135,7 +135,7 @@
 .review-form-box h3 { font-size: 1.05rem; margin-bottom: 10px; }
 .review-form-box textarea {
     width: 100%; padding: 11px 14px; font-size: .96rem; font-family: inherit;
-    border: 1px solid var(--line); border-radius: 10px; background: #fff; resize: vertical;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--surface); resize: vertical;
 }
 .review-form-box textarea:focus { outline: none; border-color: var(--pink); }
 .review-form-box .link-danger { margin-top: 10px; }
@@ -143,7 +143,7 @@
 /* chọn sao bằng CSS thuần */
 .star-input { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; margin-bottom: 10px; }
 .star-input input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.star-input label { font-size: 2.2rem; line-height: 1; color: #e0d4cf; cursor: pointer; padding: 0 2px; transition: color .1s; }
+.star-input label { font-size: 2.2rem; line-height: 1; color: var(--star-off); cursor: pointer; padding: 0 2px; transition: color .1s; }
 .star-input input:checked ~ label,
 .star-input label:hover,
 .star-input label:hover ~ label { color: #f5a623; }
@@ -166,3 +166,13 @@
     .detail, .two-col { grid-template-columns: 1fr; }
     .detail-image { font-size: 5rem; }
 }
+
+/* ---------- Khung Thông tin sản phẩm (trang chi tiết) ---------- */
+.product-facts { margin-top: 20px; }
+.product-facts h3 { font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+.facts-table { width: 100%; border-collapse: collapse; font-size: .88rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.facts-table th, .facts-table td { padding: 7px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.45; }
+.facts-table tr:last-child th, .facts-table tr:last-child td { border-bottom: 0; }
+.facts-table th { width: 138px; font-weight: 500; color: var(--muted); white-space: nowrap; background: var(--cream); }
+.facts-table td { font-weight: 600; }
+@media (max-width: 560px) { .facts-table th { width: 112px; white-space: normal; } }

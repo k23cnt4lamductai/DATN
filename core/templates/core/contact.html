@@ -1,0 +1,73 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}{% shop_info as shop %}
+
+{% block title %}Liên hệ – {{ shop.name }}{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <div class="page-hero">
+        <h1>Liên hệ</h1>
+        <p>Hãy ghé tiệm hoặc nhắn cho chúng tôi, rất vui được phục vụ bạn.</p>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>📍 Địa chỉ</h3>
+            <p>{{ shop.address }}</p>
+            <p style="margin-top:10px;">
+                <a href="https://www.google.com/maps/search/?api=1&amp;query={{ shop.map_query|default:shop.address|urlencode }}"
+                   target="_blank" rel="noopener">Xem trên Google Maps →</a>
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h3>📞 Liên lạc</h3>
+            <ul class="plain-list">
+                <li>Điện thoại: <a href="tel:{{ shop.phone|digits }}">{{ shop.phone }}</a></li>
+                <li>Email: <a href="mailto:{{ shop.email }}">{{ shop.email }}</a></li>
+                {% if shop.zalo %}<li>Zalo: <a href="{{ shop.zalo }}" target="_blank" rel="noopener">Nhắn qua Zalo</a></li>{% endif %}
+                {% if shop.facebook %}<li>Facebook: <a href="{{ shop.facebook }}" target="_blank" rel="noopener">Trang của tiệm</a></li>{% endif %}
+                {% if shop.instagram %}<li>Instagram: <a href="{{ shop.instagram }}" target="_blank" rel="noopener">Xem ảnh bánh</a></li>{% endif %}
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h3>🕒 Giờ mở cửa</h3>
+            <ul class="plain-list hours">
+                {% for day, time in shop.hours %}
+                    <li><span>{{ day }}</span> <strong>{{ time }}</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% if branches %}
+    <section class="branches">
+        <h2 class="section-title">🏪 Hệ thống chi nhánh {{ shop.name }}</h2>
+        <div class="info-grid">
+            {% for b in branches %}
+            <div class="info-card branch-card">
+                <h3>{{ b.name }}</h3>
+                <p>📍 {{ b.address }}{% if b.district %}, {{ b.district }}{% endif %}, {{ b.city }}</p>
+                {% if b.phone %}<p>📞 <a href="tel:{{ b.phone|digits }}">{{ b.phone }}</a></p>{% endif %}
+                <p>🕒 {{ b.open_time|time:"H:i" }} – {{ b.close_time|time:"H:i" }}</p>
+                <p style="margin-top:10px;">
+                    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ b.address|add:', '|add:b.city|urlencode }}"
+                       target="_blank" rel="noopener">Xem trên Google Maps →</a>
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <div class="info-card" style="margin-top:16px;">
+        <h3>🎂 Đặt bánh theo yêu cầu</h3>
+        <p>Bạn có thể ghi chú chữ trên bánh, giờ muốn nhận... ở bước đặt hàng. Chúng tôi sẽ gọi điện xác nhận với bạn.</p>
+    </div>
+
+    <div class="cta-box">
+        <a class="btn" href="{% url 'products:home' %}">Đặt bánh ngay</a>
+    </div>
+</main>
+{% endblock %}

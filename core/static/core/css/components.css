@@ -4,7 +4,7 @@
 /* ---------- Header: nút giỏ hàng ---------- */
 .cart-link {
     position: relative; font-weight: 600; padding: 9px 16px;
-    border: 1px solid var(--line); border-radius: 999px; background: #fff; transition: .15s;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); transition: .15s;
 }
 .cart-link:hover { border-color: var(--pink); color: var(--pink-dark); }
 .cart-badge {
@@ -28,9 +28,9 @@
     background: var(--pink); color: #fff; border: 1px solid var(--pink);
     border-radius: 999px; cursor: pointer; text-align: center; transition: .15s;
 }
-.btn:hover { background: var(--pink-dark); border-color: var(--pink-dark); }
+.btn:hover { background: var(--pink-hover); border-color: var(--pink-hover); }
 .btn:disabled { background: #e5dcd8; border-color: #e5dcd8; color: #a99d98; cursor: not-allowed; }
-.btn-outline { background: #fff; color: var(--pink-dark); }
+.btn-outline { background: var(--surface); color: var(--pink-dark); }
 .btn-outline:hover { background: var(--pink-soft); color: var(--pink-dark); }
 .btn-block { display: block; width: 100%; }
 .btn-small { padding: 6px 14px; font-size: .85rem; }
@@ -39,20 +39,20 @@
 
 /* ---------- Header: tài khoản ---------- */
 .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.auth-link { padding: 9px 16px; font-weight: 600; border-radius: 999px; border: 1px solid var(--line); background: #fff; transition: .15s; }
+.auth-link { padding: 9px 16px; font-weight: 600; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); transition: .15s; }
 .auth-link:hover { border-color: var(--pink); color: var(--pink-dark); }
 .auth-link-solid { background: var(--pink); border-color: var(--pink); color: #fff; }
-.auth-link-solid:hover { background: var(--pink-dark); border-color: var(--pink-dark); color: #fff; }
+.auth-link-solid:hover { background: var(--pink-hover); border-color: var(--pink-hover); color: #fff; }
 .user-menu { position: relative; }
 .user-menu summary {
     list-style: none; cursor: pointer; padding: 9px 16px; font-weight: 600;
-    border: 1px solid var(--line); border-radius: 999px; background: #fff; user-select: none;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); user-select: none;
 }
 .user-menu summary::-webkit-details-marker { display: none; }
 .user-menu summary:hover, .user-menu[open] summary { border-color: var(--pink); color: var(--pink-dark); }
 .user-menu .menu {
     position: absolute; right: 0; top: calc(100% + 8px); min-width: 190px; z-index: 20;
-    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 6px;
     box-shadow: 0 10px 24px rgba(90, 62, 54, .12);
 }
 .user-menu .menu a, .user-menu .menu button {
@@ -64,7 +64,7 @@
 /* ---------- Sao đánh giá ---------- */
 .stars {
     --rating: 0; display: inline-block; font-size: 1rem; line-height: 1; vertical-align: middle;
-    background: linear-gradient(90deg, #f5a623 calc(var(--rating) / 5 * 100%), #e6dad5 0);
+    background: linear-gradient(90deg, #f5a623 calc(var(--rating) / 5 * 100%), var(--star-off) 0);
     -webkit-background-clip: text; background-clip: text;
     color: transparent; -webkit-text-fill-color: transparent;
 }

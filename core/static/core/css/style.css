@@ -1,11 +1,17 @@
 :root {
     --pink: #e8728f;
-    --pink-dark: #c9506f;
+    --pink-dark: #c9506f;      /* chữ nhấn màu hồng */
+    --pink-hover: #c9506f;     /* màu nền khi rê chuột lên nút */
     --pink-soft: #fdeef2;
-    --cream: #fffaf5;
-    --brown: #5a3e36;
+    --cream: #fffaf5;          /* nền trang */
+    --surface: #ffffff;        /* nền thẻ, đầu trang, chân trang */
+    --brown: #5a3e36;          /* chữ chính */
     --muted: #8d7b75;
     --line: #f0e2dc;
+    --hero-end: #fff3e6;
+    --hero-overlay: rgba(255, 250, 245, .92);
+    --track: #f1e7e2;          /* thanh nền của biểu đồ sao */
+    --star-off: #e6dad5;       /* ngôi sao chưa sáng */
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -19,7 +25,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Header ---------- */
 header {
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--line);
     position: sticky; top: 0; z-index: 10;
 }
@@ -40,11 +46,11 @@ header {
     background: var(--pink); color: #fff; border: none;
     border-radius: 0 999px 999px 0; font-weight: 600;
 }
-.search button:hover { background: var(--pink-dark); }
+.search button:hover { background: var(--pink-hover); }
 
 /* ---------- Banner ---------- */
 .hero {
-    background: linear-gradient(135deg, var(--pink-soft), #fff3e6);
+    background: linear-gradient(135deg, var(--pink-soft), var(--hero-end));
     padding: 44px 0; text-align: center;
 }
 .hero h1 { font-size: 2rem; color: var(--pink-dark); margin-bottom: 8px; }
@@ -54,7 +60,7 @@ header {
 .categories { display: flex; flex-wrap: wrap; gap: 10px; padding: 28px 0 8px; }
 .cat {
     padding: 8px 18px; border-radius: 999px; font-size: .92rem;
-    background: #fff; border: 1px solid var(--line); transition: .15s;
+    background: var(--surface); border: 1px solid var(--line); transition: .15s;
 }
 .cat:hover { border-color: var(--pink); color: var(--pink-dark); }
 .cat.active { background: var(--pink); border-color: var(--pink); color: #fff; font-weight: 600; }
@@ -68,7 +74,7 @@ header {
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 .card {
-    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
     overflow: hidden; display: flex; flex-direction: column; transition: .2s;
 }
 .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(201, 80, 111, .12); }
@@ -99,6 +105,6 @@ header {
 .empty a { color: var(--pink-dark); font-weight: 600; }
 
 footer {
-    background: #fff; border-top: 1px solid var(--line);
+    background: var(--surface); border-top: 1px solid var(--line);
     text-align: center; padding: 22px 0; color: var(--muted); font-size: .88rem;
 }

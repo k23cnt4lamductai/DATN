@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}{% shop_info as shop %}
+
+{% block title %}Giới thiệu – {{ shop.name }}{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <div class="page-hero">
+        <h1>Về {{ shop.name }}</h1>
+        <p>{{ shop.tagline }}</p>
+    </div>
+
+    <div class="prose">
+        {% for paragraph in shop.about %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+
+    <div class="perks perks-flat">
+        {% for p in shop.promos %}
+            <div class="perk">
+                <span class="perk-icon">{{ p.icon }}</span>
+                <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="cta-box">
+        <a class="btn" href="{% url 'products:home' %}">Xem các loại bánh</a>
+        <a class="btn btn-outline" href="{% url 'core:contact' %}">Liên hệ với chúng tôi</a>
+    </div>
+</main>
+{% endblock %}

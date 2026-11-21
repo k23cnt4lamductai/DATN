@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
-{% load vnd %}
+{% load vnd shop_tags %}
 
-{% block title %}{{ product.name }} – Tiệm Bánh Ngọt{% endblock %}
+{% block title %}{{ product.name }} – Tài Bakery{% endblock %}
 
 {% block content %}
 <main class="container page">
@@ -57,6 +57,30 @@
                     </div>
                 </form>
             {% endif %}
+
+            {% shop_info as shop %}
+            {% with ing=product.ingredient_text allergens=product.allergen_text %}
+            {% if product.weight or product.shelf_life or product.storage or ing or shop.delivery_note %}
+            <div class="product-facts">
+                <h3>Thông tin sản phẩm</h3>
+                <table class="facts-table">
+                    {% if product.weight %}<tr><th>⚖️ Trọng lượng</th><td>{{ product.weight }}</td></tr>{% endif %}
+                    {% if product.shelf_life %}<tr><th>📅 Hạn sử dụng</th><td>{{ product.shelf_life }}</td></tr>{% endif %}
+                    {% if product.storage %}<tr><th>❄️ Bảo quản</th><td>{{ product.storage }}</td></tr>{% endif %}
+                    {% if shop.delivery_note %}<tr><th>🚚 Giao hàng</th><td>{{ shop.delivery_note }}</td></tr>{% endif %}
+                    {% if ing %}<tr><th>🌾 Thành phần</th><td>{{ ing }}</td></tr>{% endif %}
+                    <tr>
+                        <th>⚠️ Lưu ý</th>
+                        <td>
+                            {% if allergens %}Có chứa: {{ allergens }}.<br>{% endif %}
+                            Không dùng cho người dị ứng với thành phần của sản phẩm.<br>
+                            Không sử dụng khi quá hạn sử dụng.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+            {% endwith %}
         </div>
     </section>
 

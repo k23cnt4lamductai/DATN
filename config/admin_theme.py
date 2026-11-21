@@ -2,11 +2,11 @@
 
 JAZZMIN_SETTINGS = {
     # --- Tên / thương hiệu ---
-    "site_title": "Quản trị Tiệm Bánh Ngọt",
-    "site_header": "Tiệm Bánh Ngọt",
-    "site_brand": "🧁 Tiệm Bánh Ngọt",
-    "welcome_sign": "Chào mừng đến trang quản lý Tiệm Bánh Ngọt",
-    "copyright": "Tiệm Bánh Ngọt",
+    "site_title": "Quản trị Tài Bakery",
+    "site_header": "Tài Bakery",
+    "site_brand": "🧁 Tài Bakery",
+    "welcome_sign": "Chào mừng đến trang quản lý Tài Bakery",
+    "copyright": "Tài Bakery",
     "language_chooser": False,
 
     # --- Tìm nhanh trên thanh trên cùng ---
@@ -31,7 +31,8 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
     "order_with_respect_to": [
         "orders", "orders.order", "orders.orderitem",
-        "products", "products.product", "products.category", "products.review",
+        "products", "products.product", "products.category", "products.review", "products.ingredient",
+        "stores", "stores.branch",
         "auth",
     ],
     "icons": {
@@ -45,6 +46,9 @@ JAZZMIN_SETTINGS = {
         "products.product": "fas fa-birthday-cake",
         "products.category": "fas fa-tags",
         "products.review": "fas fa-star",
+        "products.ingredient": "fas fa-seedling",
+        "stores": "fas fa-store",
+        "stores.branch": "fas fa-store",
     },
     "custom_links": {
         "orders": [

@@ -228,7 +228,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 # ---- Tên trang quản trị + trang tổng quan (doanh thu, đơn mới, bánh sắp hết) ----
-admin.site.site_header = "Quản trị Tiệm Bánh Ngọt"
-admin.site.site_title = "Tiệm Bánh Ngọt"
+admin.site.site_header = "Quản trị Tài Bakery"
+admin.site.site_title = "Tài Bakery"
 admin.site.index_title = "Tổng quan"
 admin.site.index_template = "orders/admin_index.html"

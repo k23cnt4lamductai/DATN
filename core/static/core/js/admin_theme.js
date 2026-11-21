@@ -1,4 +1,4 @@
-/* Trang quản trị Tiệm Bánh Ngọt:
+/* Trang quản trị Tài Bakery:
    1) nút đổi giao diện sáng / tối (nhớ lựa chọn trong trình duyệt)
    2) nút bấm nhanh gửi yêu cầu POST (đổi trạng thái đơn hàng...)
    3) việt hóa vài chữ tiếng Anh còn sót của giao diện */
