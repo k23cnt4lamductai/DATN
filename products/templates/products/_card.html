@@ -18,6 +18,7 @@
             {% else %}
                 <span class="muted">Chưa có đánh giá</span>
             {% endif %}
+            {% if p.sold %}<span class="sold-count">· Đã bán {{ p.sold }}</span>{% endif %}
         </div>
         {% if p.description %}<p class="desc">{{ p.description }}</p>{% endif %}
         <div class="price">{{ p.price|vnd }}</div>

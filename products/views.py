@@ -1,13 +1,17 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
-from django.db.models import Avg, Count, Q
+from django.core.paginator import Paginator
+from django.db.models import Avg, Count, F, IntegerField, OuterRef, Q, Subquery, Sum, Value
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.views.decorators.http import require_POST
 
+from core.templatetags.vnd import vnd
 from orders.models import Order, OrderItem
 
 from .forms import ReviewForm
+from .listing import DEFAULT_SORT, PAGE_SIZE, SORTS, make_url, page_items, parse_filters
 from .models import Category, Product, Review
 
 
@@ -35,23 +39,109 @@ def review_permission(user, product):
     return True, ""
 
 
+def with_sold(queryset):
+    """Gắn số bánh đã bán (sold) = tổng số lượng trong các đơn chưa hủy."""
+    sold = (
+        OrderItem.objects.filter(product=OuterRef("pk"))
+        .exclude(order__status=Order.Status.CANCELLED)
+        .values("product").order_by()
+        .annotate(total=Sum("quantity")).values("total")
+    )
+    return queryset.annotate(sold=Coalesce(Subquery(sold, output_field=IntegerField()), Value(0)))
+
+
+def _ordering(sort):
+    if sort == "popular":
+        return ["-sold", "-created_at", "-pk"]
+    if sort == "rating":
+        return [F("avg_rating").desc(nulls_last=True), "-review_count", "-created_at"]
+    if sort == "price_asc":
+        return ["price", "name"]
+    if sort == "price_desc":
+        return ["-price", "name"]
+    return ["-created_at", "-pk"]
+
+
 def home(request):
+    flt = parse_filters(request.GET)
+    items = list(request.GET.items())
+    base = request.path
+    anchor = "#san-pham"
+
     products = Product.objects.filter(is_available=True).select_related("category")
-    categories = Category.objects.all()
+    if flt["category"]:
+        products = products.filter(category__slug=flt["category"])
+    if flt["q"]:
+        products = products.filter(name__icontains=flt["q"])
+    if flt["min_price"] is not None:
+        products = products.filter(price__gte=flt["min_price"])
+    if flt["max_price"] is not None:
+        products = products.filter(price__lte=flt["max_price"])
+    products = with_sold(with_ratings(products)).order_by(*_ordering(flt["sort"]))
 
-    category_slug = request.GET.get("category")
-    keyword = request.GET.get("q")
+    paginator = Paginator(products, PAGE_SIZE)
+    page_obj = paginator.get_page(request.GET.get("page"))
 
-    if category_slug:
-        products = products.filter(category__slug=category_slug)
-    if keyword:
-        products = products.filter(name__icontains=keyword)
+    # Liên kết giữ nguyên các bộ lọc khác khi đổi danh mục / đổi trang
+    category_links = [
+        {"name": c.name, "url": make_url(base, items, category=c.slug) + anchor, "active": c.slug == flt["category"]}
+        for c in Category.objects.all()
+    ]
+    page_links = []
+    for number in page_items(page_obj.number, paginator.num_pages):
+        if number is None:
+            page_links.append({"gap": True})
+        else:
+            page_links.append({
+                "num": number, "current": number == page_obj.number,
+                "url": make_url(base, items, page=None if number == 1 else number) + anchor,
+            })
+
+    has_price = flt["min_price"] is not None or flt["max_price"] is not None
+    filters_active = has_price or flt["sort"] != DEFAULT_SORT
+    summary = []
+    if flt["min_price"] is not None and flt["max_price"] is not None:
+        summary.append(f"giá từ {vnd(flt['min_price'])} đến {vnd(flt['max_price'])}")
+    elif flt["min_price"] is not None:
+        summary.append(f"giá từ {vnd(flt['min_price'])}")
+    elif flt["max_price"] is not None:
+        summary.append(f"giá đến {vnd(flt['max_price'])}")
+    if flt["sort"] != DEFAULT_SORT:
+        summary.append("sắp xếp: " + dict(SORTS)[flt["sort"]].lower())
+
+    # Mục "Bánh bán chạy" / "Bánh mới": chỉ hiện ở trang chủ nguyên bản (chưa lọc, trang 1)
+    show_highlights = (
+        not (flt["category"] or flt["q"] or has_price)
+        and flt["sort"] == DEFAULT_SORT and page_obj.number == 1
+    )
+    bestsellers, newest = [], []
+    if show_highlights:
+        shelf = with_sold(with_ratings(Product.objects.filter(is_available=True).select_related("category")))
+        bestsellers = list(shelf.filter(sold__gt=0).order_by("-sold", "-created_at")[:4])
+        newest = list(shelf.order_by("-created_at", "-pk")[:4])
 
     return render(request, "products/home.html", {
-        "products": with_ratings(products),
-        "categories": categories,
-        "current_category": category_slug,
-        "keyword": keyword or "",
+        "products": page_obj,
+        "page_obj": page_obj,
+        "total_count": paginator.count,
+        "page_links": page_links,
+        "prev_url": make_url(base, items, page=None if page_obj.number == 2 else page_obj.number - 1) + anchor if page_obj.has_previous() else "",
+        "next_url": make_url(base, items, page=page_obj.number + 1) + anchor if page_obj.has_next() else "",
+        "category_links": category_links,
+        "all_url": make_url(base, items, category=None) + anchor,
+        "reset_url": make_url(base, items, sort=None, min_price=None, max_price=None) + anchor,
+        "popular_url": make_url(base, [], sort="popular") + anchor,
+        "current_category": flt["category"],
+        "keyword": flt["q"],
+        "sort_options": SORTS,
+        "current_sort": flt["sort"],
+        "min_price": flt["min_price"],
+        "max_price": flt["max_price"],
+        "filters_active": filters_active,
+        "filter_summary": " · ".join(summary),
+        "show_highlights": show_highlights,
+        "bestsellers": bestsellers,
+        "newest": newest,
     })
 
 

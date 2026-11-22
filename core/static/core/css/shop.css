@@ -132,6 +132,49 @@ header { border-bottom: none; box-shadow: 0 1px 0 var(--line); }
 .plain-list { list-style: none; display: grid; gap: 6px; }
 .cta-box { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
 
+/* ---------------- Danh sách bánh: kệ nổi bật, bộ lọc, phân trang ---------------- */
+.section-title { font-size: 1.35rem; margin: 34px 0 -10px; scroll-margin-top: 90px; }
+.shelf { margin-top: 36px; }
+.shelf-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.shelf-head h2 { font-size: 1.35rem; }
+.shelf-head a { color: var(--pink-dark); font-weight: 600; font-size: .92rem; }
+.shelf .grid { padding-bottom: 0; }
+.sold-count { color: var(--muted); }
+
+.filter-bar {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; margin: 14px 0 4px; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+}
+.fb-field { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; font-weight: 600; color: var(--muted); }
+.fb-field select, .fb-range input {
+    padding: 9px 12px; font-size: .92rem; font-family: inherit; color: var(--brown);
+    background: var(--cream); border: 1px solid var(--line); border-radius: 10px;
+}
+.fb-field select:focus, .fb-range input:focus { outline: none; border-color: var(--pink); }
+.fb-range { display: flex; align-items: center; gap: 8px; }
+.fb-range input { width: 120px; }
+.fb-range i { color: var(--muted); font-style: normal; }
+.fb-reset { align-self: center; color: var(--pink-dark); font-weight: 600; font-size: .9rem; text-decoration: underline; }
+.filter-bar .btn { padding: 9px 22px; }
+
+.pager { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; padding: 4px 0 56px; }
+.pager-num, .pager-btn, .pager-gap {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px;
+    padding: 0 12px; border-radius: 12px; font-weight: 600; font-size: .92rem;
+}
+.pager-num, .pager-btn { background: var(--surface); border: 1px solid var(--line); transition: .15s; }
+.pager-num:hover, .pager-btn:hover { border-color: var(--pink); color: var(--pink-dark); }
+.pager-num.current { background: var(--pink); border-color: var(--pink); color: #fff; }
+.pager-gap { color: var(--muted); }
+
+@media (max-width: 600px) {
+    .filter-bar { gap: 10px; padding: 12px; }
+    .fb-field { flex: 1 1 100%; }
+    .fb-range input { width: 100%; flex: 1; }
+    .fb-range { width: 100%; }
+    .filter-bar .btn { flex: 1; }
+}
+
 /* ===================== Chế độ tối ===================== */
 html[data-theme="dark"] {
     color-scheme: dark;

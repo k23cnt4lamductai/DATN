@@ -32,18 +32,70 @@
 
 <main class="container" id="san-pham">
 
+    {% if show_highlights %}
+        {% if bestsellers %}
+            <section class="shelf">
+                <div class="shelf-head">
+                    <h2>🔥 Bánh bán chạy</h2>
+                    <a href="{{ popular_url }}">Xem tất cả →</a>
+                </div>
+                <div class="grid">
+                    {% for p in bestsellers %}{% include "products/_card.html" %}{% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        {% if newest %}
+            <section class="shelf">
+                <div class="shelf-head">
+                    <h2>✨ Bánh mới</h2>
+                    <a href="#tat-ca">Xem tất cả →</a>
+                </div>
+                <div class="grid">
+                    {% for p in newest %}{% include "products/_card.html" %}{% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endif %}
+
+    <h2 class="section-title" id="tat-ca">{% if show_highlights %}Tất cả bánh{% else %}Danh sách bánh{% endif %}</h2>
+
     <nav class="categories">
-        <a class="cat {% if not current_category %}active{% endif %}"
-           href="{% url 'products:home' %}{% if keyword %}?q={{ keyword|urlencode }}{% endif %}">Tất cả</a>
-        {% for c in categories %}
-            <a class="cat {% if current_category == c.slug %}active{% endif %}"
-               href="?category={{ c.slug }}{% if keyword %}&amp;q={{ keyword|urlencode }}{% endif %}">{{ c.name }}</a>
+        <a class="cat {% if not current_category %}active{% endif %}" href="{{ all_url }}">Tất cả</a>
+        {% for c in category_links %}
+            <a class="cat {% if c.active %}active{% endif %}" href="{{ c.url }}">{{ c.name }}</a>
         {% endfor %}
     </nav>
 
+    <form class="filter-bar" method="get" action="{% url 'products:home' %}#san-pham">
+        {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+        {% if keyword %}<input type="hidden" name="q" value="{{ keyword }}">{% endif %}
+
+        <label class="fb-field">
+            <span>Sắp xếp</span>
+            <select name="sort" onchange="this.form.submit()">
+                {% for value, label in sort_options %}
+                    <option value="{{ value }}" {% if value == current_sort %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <div class="fb-field">
+            <span>Khoảng giá (đ)</span>
+            <div class="fb-range">
+                <input type="number" name="min_price" min="0" step="1000" inputmode="numeric" placeholder="Từ" value="{{ min_price|default_if_none:'' }}">
+                <i>–</i>
+                <input type="number" name="max_price" min="0" step="1000" inputmode="numeric" placeholder="Đến" value="{{ max_price|default_if_none:'' }}">
+            </div>
+        </div>
+
+        <button class="btn" type="submit">Áp dụng</button>
+        {% if filters_active %}<a class="fb-reset" href="{{ reset_url }}">Xóa lọc</a>{% endif %}
+    </form>
+
     <p class="result-info">
-        Có <strong>{{ products|length }}</strong> sản phẩm
+        Có <strong>{{ total_count }}</strong> sản phẩm
         {% if keyword %} cho từ khóa "<strong>{{ keyword }}</strong>"{% endif %}
+        {% if filter_summary %} · {{ filter_summary }}{% endif %}
     </p>
 
     {% if products %}
@@ -52,6 +104,22 @@
                 {% include "products/_card.html" %}
             {% endfor %}
         </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+            <nav class="pager" aria-label="Phân trang">
+                {% if prev_url %}<a class="pager-btn" href="{{ prev_url }}">← Trước</a>{% endif %}
+                {% for item in page_links %}
+                    {% if item.gap %}
+                        <span class="pager-gap">…</span>
+                    {% elif item.current %}
+                        <span class="pager-num current" aria-current="page">{{ item.num }}</span>
+                    {% else %}
+                        <a class="pager-num" href="{{ item.url }}">{{ item.num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if next_url %}<a class="pager-btn" href="{{ next_url }}">Sau →</a>{% endif %}
+            </nav>
+        {% endif %}
     {% else %}
         <div class="empty">
             <div class="big">🔍</div>
