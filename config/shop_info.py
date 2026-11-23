@@ -10,7 +10,7 @@ SHOP_INFO = {
     "slogan": "Làm thủ công từ nguyên liệu chọn lọc – ngọt vừa, thơm lâu.",
 
     # Dòng thông báo / khuyến mãi chạy trên cùng mọi trang. Để "" để tắt.
-    "announcement": "🎉 Chào mừng bạn đến với Tài Bakery – đặt hôm nay, nhận bánh tươi trong ngày!",
+    "announcement": "TÀI BAKERY – HOTLINE: 0901 000 001",
 
     # Ảnh bìa trang chủ (tùy chọn). Ví dụ: "/media/banner.jpg" (để file trong thư mục media/).
     # Để "" thì dùng nền màu mặc định.

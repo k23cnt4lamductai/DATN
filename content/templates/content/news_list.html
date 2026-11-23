@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}
+
+{% block title %}Tin tức & Khuyến mại – Tài Bakery{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <div class="page-hero">
+        <h1>Tin tức &amp; Khuyến mại</h1>
+        <p>Cập nhật chương trình ưu đãi, sản phẩm mới và những câu chuyện từ tiệm bánh.</p>
+    </div>
+
+    <nav class="categories" aria-label="Lọc bài viết">
+        <a class="cat {% if not kind %}active{% endif %}" href="{% url 'content:news_list' %}">Tất cả</a>
+        {% for value, label in kinds %}
+            <a class="cat {% if kind == value %}active{% endif %}" href="{% url 'content:news_list' %}?kind={{ value }}">{{ label }}</a>
+        {% endfor %}
+    </nav>
+
+    {% if page_obj %}
+        <div class="news-grid">
+            {% for a in page_obj %}{% include "content/_article_card.html" %}{% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="pager" aria-label="Phân trang">
+            {% if page_obj.has_previous %}
+                <a class="pager-btn" href="?{% if kind %}kind={{ kind }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">‹ Trước</a>
+            {% endif %}
+            {% for n in page_numbers %}
+                {% if n == page_obj.paginator.ELLIPSIS %}
+                    <span class="pager-gap">…</span>
+                {% elif n == page_obj.number %}
+                    <span class="pager-num current" aria-current="page">{{ n }}</span>
+                {% else %}
+                    <a class="pager-num" href="?{% if kind %}kind={{ kind }}&amp;{% endif %}page={{ n }}">{{ n }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a class="pager-btn" href="?{% if kind %}kind={{ kind }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Sau ›</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty">
+            <div class="big">📰</div>
+            <p>Chưa có bài viết nào{% if kind %} trong mục này{% endif %}.</p>
+            {% if kind %}<p><a href="{% url 'content:news_list' %}">Xem tất cả bài viết</a></p>{% endif %}
+        </div>
+    {% endif %}
+</main>
+{% endblock %}

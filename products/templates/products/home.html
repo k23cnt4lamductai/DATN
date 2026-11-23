@@ -1,54 +1,63 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-{% load shop_tags %}{% shop_info as shop %}
+{% load shop_tags %}{% shop_info as shop %}{% nav_categories as nav_cats %}{% footer_branches as branch_list %}{% latest_articles 3 as news_list %}
 <section class="hero{% if shop.hero_image %} hero-image{% endif %}"{% if shop.hero_image %} style="background-image: url('{{ shop.hero_image }}')"{% endif %}>
     <div class="container hero-inner">
         <div class="hero-text">
-            <span class="hero-kicker">🍰 Tươi ngon mỗi ngày</span>
+            <span class="hero-kicker">Tươi ngon mỗi ngày</span>
             <h1>{{ shop.tagline }}</h1>
             <p>{{ shop.slogan }}</p>
             <div class="hero-actions">
-                <a class="btn" href="#san-pham">Xem bánh ngay</a>
-                <a class="btn btn-outline" href="{% url 'core:about' %}">Về chúng tôi</a>
+                <a class="btn btn-light" href="#san-pham">Xem bánh ngay</a>
+                <a class="btn btn-ghost-light" href="{% url 'core:about' %}">Về chúng tôi</a>
             </div>
         </div>
         <div class="hero-art" aria-hidden="true"><span>🎂</span><span>🧁</span><span>🍰</span></div>
     </div>
 </section>
 
-{% if shop.promos %}
+<div class="quick-links">
     <div class="container">
-        <div class="perks">
-            {% for p in shop.promos %}
-                <div class="perk">
-                    <span class="perk-icon">{{ p.icon }}</span>
-                    <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
-                </div>
-            {% endfor %}
-        </div>
+        <a href="{% url 'core:contact' %}"><span class="qi">📍</span> Hệ thống cửa hàng</a>
+        <a href="{{ popular_url }}"><span class="qi">🔥</span> Bánh bán chạy</a>
+        <a href="{% url 'core:contact' %}#dat-banh"><span class="qi">🎁</span> Đặt bánh theo yêu cầu</a>
     </div>
-{% endif %}
+</div>
 
 <main class="container" id="san-pham">
 
     {% if show_highlights %}
+        {% if nav_cats %}
+        <div class="cat-tiles">
+            {% for c in nav_cats|slice:":4" %}
+                <a class="cat-tile" href="{% url 'products:home' %}?category={{ c.slug }}#tat-ca">
+                    <span class="ct-icon" aria-hidden="true">{{ c.name|cat_icon }}</span>
+                    <h3>{{ c.name }}</h3>
+                    <span class="ct-more">Khám phá ngay</span>
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% if bestsellers %}
             <section class="shelf">
-                <div class="shelf-head">
-                    <h2>🔥 Bánh bán chạy</h2>
-                    <a href="{{ popular_url }}">Xem tất cả →</a>
+                <div class="sec-head">
+                    <span class="sec-kicker">✦ Best Sellers</span>
+                    <h2>Bánh được yêu thích nhất</h2>
+                    <p>Những chiếc bánh được khách hàng lựa chọn nhiều nhất tại {{ shop.name }}.</p>
                 </div>
                 <div class="grid">
                     {% for p in bestsellers %}{% include "products/_card.html" %}{% endfor %}
                 </div>
+                <p class="sec-more"><a class="btn btn-outline" href="{{ popular_url }}">Xem tất cả bánh bán chạy</a></p>
             </section>
         {% endif %}
         {% if newest %}
             <section class="shelf">
-                <div class="shelf-head">
-                    <h2>✨ Bánh mới</h2>
-                    <a href="#tat-ca">Xem tất cả →</a>
+                <div class="sec-head">
+                    <span class="sec-kicker">✦ New</span>
+                    <h2>Bánh mới</h2>
                 </div>
                 <div class="grid">
                     {% for p in newest %}{% include "products/_card.html" %}{% endfor %}
@@ -57,7 +66,10 @@
         {% endif %}
     {% endif %}
 
-    <h2 class="section-title" id="tat-ca">{% if show_highlights %}Tất cả bánh{% else %}Danh sách bánh{% endif %}</h2>
+    <div class="sec-head" id="tat-ca">
+        <span class="sec-kicker">✦ Menu</span>
+        <h2>{% if show_highlights %}Tất cả bánh{% else %}Danh sách bánh{% endif %}</h2>
+    </div>
 
     <nav class="categories">
         <a class="cat {% if not current_category %}active{% endif %}" href="{{ all_url }}">Tất cả</a>
@@ -126,6 +138,55 @@
             <p>Không tìm thấy bánh nào phù hợp.</p>
             <p><a href="{% url 'products:home' %}">Xem tất cả sản phẩm</a></p>
         </div>
+    {% endif %}
+
+
+    {% if show_highlights and news_list %}
+    <section class="shelf">
+        <div class="sec-head">
+            <span class="sec-kicker">✦ News &amp; Offers</span>
+            <h2>Tin tức &amp; Khuyến mại</h2>
+            <p>Chương trình ưu đãi và những câu chuyện mới nhất từ {{ shop.name }}.</p>
+        </div>
+        <div class="news-grid">
+            {% for a in news_list %}{% include "content/_article_card.html" %}{% endfor %}
+        </div>
+        <p class="sec-more"><a class="btn btn-outline" href="{% url 'content:news_list' %}">Xem tất cả bài viết</a></p>
+    </section>
+    {% endif %}
+
+    <section class="about-block">
+        <div class="about-art">
+            <span class="aa-icon" aria-hidden="true">🎂</span>
+            <span class="aa-name">{{ shop.name }}</span>
+            <span class="aa-tag">{{ shop.tagline }}</span>
+        </div>
+        <div class="about-text">
+            <span class="sec-kicker">✦ Về chúng tôi</span>
+            <h2>{{ shop.tagline }}</h2>
+            {% for paragraph in shop.about|slice:":2" %}<p>{{ paragraph }}</p>{% endfor %}
+            <a class="btn btn-outline" href="{% url 'core:about' %}">Xem thêm</a>
+        </div>
+    </section>
+
+    {% if branch_list %}
+    <section class="shelf" style="margin-top:64px;">
+        <div class="sec-head">
+            <span class="sec-kicker">✦ Hệ thống cửa hàng</span>
+            <h2>Ghé thăm {{ shop.name }}</h2>
+        </div>
+        <div class="branch-cards">
+            {% for b in branch_list %}
+                <div class="branch-card">
+                    <h3>{{ b.name }}</h3>
+                    <p>📍 {{ b.address }}{% if b.district %}, {{ b.district }}{% endif %}</p>
+                    <p>🕒 {{ b.open_time|time:"H:i" }} – {{ b.close_time|time:"H:i" }}</p>
+                    {% if b.phone %}<p>📞 <a href="tel:{{ b.phone|digits }}">{{ b.phone }}</a></p>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <p class="sec-more" style="margin-top:22px;"><a class="btn btn-outline" href="{% url 'core:contact' %}">Xem tất cả chi nhánh</a></p>
+    </section>
     {% endif %}
 
 </main>

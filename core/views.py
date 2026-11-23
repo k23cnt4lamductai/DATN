@@ -8,5 +8,5 @@ def about(request):
 
 
 def contact(request):
-    branches = Branch.objects.filter(is_active=True)
+    branches = Branch.objects.filter(is_active=True).order_by("id")
     return render(request, "core/contact.html", {"branches": branches})

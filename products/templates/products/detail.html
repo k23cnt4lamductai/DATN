@@ -49,8 +49,12 @@
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
                     <label for="qty">Số lượng</label>
-                    <input id="qty" class="qty" type="number" name="quantity"
-                           value="1" min="1" max="{{ product.stock }}">
+                    <div class="qty-stepper">
+                        <button type="button" data-step="-1" aria-label="Giảm">−</button>
+                        <input id="qty" class="qty" type="number" name="quantity"
+                               value="1" min="1" max="{{ product.stock }}">
+                        <button type="button" data-step="1" aria-label="Tăng">+</button>
+                    </div>
                     <div class="buy-actions">
                         <button class="btn" type="submit">Thêm vào giỏ</button>
                         <button class="btn btn-outline" type="submit" name="buy_now" value="1">Mua ngay</button>

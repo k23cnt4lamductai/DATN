@@ -1,0 +1,21 @@
+<article class="news-card">
+    <a class="news-thumb" href="{{ a.get_absolute_url }}">
+        {% if a.image %}
+            <img src="{{ a.image.url }}" alt="{{ a.title }}" loading="lazy">
+        {% else %}
+            <span aria-hidden="true">{% if a.is_promo %}🎁{% else %}📰{% endif %}</span>
+        {% endif %}
+        <span class="news-kind kind-{{ a.kind }}">{{ a.get_kind_display }}</span>
+    </a>
+    <div class="news-body">
+        <div class="news-meta">
+            <time datetime="{{ a.published_at|date:'Y-m-d' }}">{{ a.published_at|date:"d/m/Y" }}</time>
+            {% if a.is_promo and a.promo_ends %}
+                · {% if a.is_expired %}<span class="promo-ended">Đã kết thúc</span>{% else %}Đến hết {{ a.promo_ends|date:"d/m/Y" }}{% endif %}
+            {% endif %}
+        </div>
+        <h3><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h3>
+        {% if a.list_summary %}<p>{{ a.list_summary|truncatewords:28 }}</p>{% endif %}
+        <a class="news-more" href="{{ a.get_absolute_url }}">Đọc tiếp →</a>
+    </div>
+</article>

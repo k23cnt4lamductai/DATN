@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}
+
+{% block title %}{{ job.title }} – Tuyển dụng Tài Bakery{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <nav class="breadcrumb">
+        <a href="{% url 'products:home' %}">Trang chủ</a> ›
+        <a href="{% url 'content:jobs' %}">Tuyển dụng</a> ›
+        <span>{{ job.title }}</span>
+    </nav>
+
+    <div class="job-layout">
+        <article class="job-detail">
+            <h1>{{ job.title }}</h1>
+            <ul class="job-chips">
+                <li>📍 {{ job.location }}</li>
+                <li>⏱ {{ job.get_job_type_display }}</li>
+                <li>💰 {{ job.salary }}</li>
+                <li>👥 Cần {{ job.headcount }} người</li>
+                {% if job.deadline %}<li>⏳ Hạn nộp {{ job.deadline|date:"d/m/Y" }}</li>{% endif %}
+            </ul>
+
+            <section>
+                <h2>Mô tả công việc</h2>
+                <div class="prose">{{ job.description|linebreaks }}</div>
+            </section>
+            {% if job.requirements %}
+            <section>
+                <h2>Yêu cầu</h2>
+                <ul class="job-bullets">{% for item in job.requirements|lines %}<li>{{ item }}</li>{% endfor %}</ul>
+            </section>
+            {% endif %}
+            {% if job.benefits %}
+            <section>
+                <h2>Quyền lợi</h2>
+                <ul class="job-bullets">{% for item in job.benefits|lines %}<li>{{ item }}</li>{% endfor %}</ul>
+            </section>
+            {% endif %}
+        </article>
+
+        <aside class="apply-box" id="ung-tuyen">
+            <h2>Ứng tuyển vị trí này</h2>
+            {% if sent %}
+                <div class="apply-ok">
+                    <div class="big" aria-hidden="true">✅</div>
+                    <h3>Đã gửi hồ sơ!</h3>
+                    <p>Cảm ơn bạn đã quan tâm. Tài Bakery sẽ liên hệ với bạn sớm nhất có thể.</p>
+                    <a class="btn btn-outline btn-block" href="{% url 'content:jobs' %}">Xem vị trí khác</a>
+                </div>
+            {% elif job.is_open %}
+                <form class="checkout-form" method="post" action="{{ job.get_absolute_url }}#ung-tuyen" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="msg msg-error">{{ form.non_field_errors }}</div>{% endif %}
+                    {% for field in form %}
+                        {% if field.name == "website" %}
+                            <div class="hp" aria-hidden="true">{{ field }}</div>
+                        {% else %}
+                            <div class="form-row {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
+                                {{ field }}
+                                {% for e in field.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if form.website.errors %}<div class="field-error">{{ form.website.errors.0 }}</div>{% endif %}
+                    <button class="btn btn-block" type="submit">Gửi hồ sơ</button>
+                </form>
+            {% else %}
+                <p class="job-closed-note">Vị trí này đã hết hạn nhận hồ sơ. Bạn xem các vị trí khác nhé.</p>
+                <a class="btn btn-outline btn-block" href="{% url 'content:jobs' %}">Xem vị trí khác</a>
+            {% endif %}
+        </aside>
+    </div>
+</main>
+{% endblock %}

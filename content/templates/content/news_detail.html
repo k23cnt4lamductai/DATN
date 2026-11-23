@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}
+
+{% block title %}{{ article.title }} – Tài Bakery{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <nav class="breadcrumb">
+        <a href="{% url 'products:home' %}">Trang chủ</a> ›
+        <a href="{% url 'content:news_list' %}">Tin tức &amp; Khuyến mại</a> ›
+        <span>{{ article.title }}</span>
+    </nav>
+
+    <article class="article">
+        <header class="article-head">
+            <span class="news-kind kind-{{ article.kind }} static">{{ article.get_kind_display }}</span>
+            <h1>{{ article.title }}</h1>
+            <div class="news-meta">
+                <time datetime="{{ article.published_at|date:'Y-m-d' }}">{{ article.published_at|date:"d/m/Y" }}</time>
+                {% if article.is_promo and article.promo_ends %}
+                    · {% if article.is_expired %}<span class="promo-ended">Đã kết thúc ngày {{ article.promo_ends|date:"d/m/Y" }}</span>
+                    {% else %}Áp dụng đến hết {{ article.promo_ends|date:"d/m/Y" }}{% endif %}
+                {% endif %}
+                {% if not article.is_published %}· <span class="promo-ended">Bản nháp (chỉ quản trị viên thấy)</span>{% endif %}
+            </div>
+        </header>
+
+        {% if article.image %}
+            <img class="article-cover" src="{{ article.image.url }}" alt="{{ article.title }}">
+        {% endif %}
+
+        <div class="prose">{{ article.body|linebreaks }}</div>
+
+        <div class="cta-box">
+            <a class="btn btn-outline" href="{% url 'content:news_list' %}">← Tất cả bài viết</a>
+            {% if article.is_promo and not article.is_expired %}
+                <a class="btn" href="{% url 'products:home' %}#san-pham">Mua bánh ngay</a>
+            {% endif %}
+        </div>
+    </article>
+
+    {% if related %}
+    <section class="related">
+        <h2>Bài viết khác</h2>
+        <div class="news-grid">
+            {% for a in related %}{% include "content/_article_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

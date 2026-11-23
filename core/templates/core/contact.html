@@ -44,9 +44,9 @@
     {% if branches %}
     <section class="branches">
         <h2 class="section-title">🏪 Hệ thống chi nhánh {{ shop.name }}</h2>
-        <div class="info-grid">
+        <div class="branch-cards">
             {% for b in branches %}
-            <div class="info-card branch-card">
+            <div class="branch-card">
                 <h3>{{ b.name }}</h3>
                 <p>📍 {{ b.address }}{% if b.district %}, {{ b.district }}{% endif %}, {{ b.city }}</p>
                 {% if b.phone %}<p>📞 <a href="tel:{{ b.phone|digits }}">{{ b.phone }}</a></p>{% endif %}
@@ -61,7 +61,7 @@
     </section>
     {% endif %}
 
-    <div class="info-card" style="margin-top:16px;">
+    <div class="info-card" id="dat-banh" style="margin-top:16px;">
         <h3>🎂 Đặt bánh theo yêu cầu</h3>
         <p>Bạn có thể ghi chú chữ trên bánh, giờ muốn nhận... ở bước đặt hàng. Chúng tôi sẽ gọi điện xác nhận với bạn.</p>
     </div>

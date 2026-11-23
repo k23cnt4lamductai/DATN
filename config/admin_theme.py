@@ -33,6 +33,7 @@ JAZZMIN_SETTINGS = {
         "orders", "orders.order", "orders.orderitem",
         "products", "products.product", "products.category", "products.review", "products.ingredient",
         "stores", "stores.branch",
+        "content", "content.article", "content.jobposting", "content.jobapplication",
         "auth",
     ],
     "icons": {
@@ -49,6 +50,10 @@ JAZZMIN_SETTINGS = {
         "products.ingredient": "fas fa-seedling",
         "stores": "fas fa-store",
         "stores.branch": "fas fa-store",
+        "content": "fas fa-newspaper",
+        "content.article": "fas fa-newspaper",
+        "content.jobposting": "fas fa-briefcase",
+        "content.jobapplication": "fas fa-file-signature",
     },
     "custom_links": {
         "orders": [
