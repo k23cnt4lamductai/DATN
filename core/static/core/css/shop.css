@@ -385,6 +385,53 @@
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 900px) { .job-layout { grid-template-columns: 1fr; } .apply-box { position: static; } }
 
+/* ---------------- Trang tài khoản ---------------- */
+.account-layout { display: grid; gap: 28px; grid-template-columns: 270px 1fr; align-items: start; }
+.account-side { position: sticky; top: 96px; display: grid; gap: 14px; }
+.account-card { display: flex; align-items: center; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 6px; }
+.avatar {
+    flex: none; display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%;
+    background: var(--accent-dark); color: #f4e3c8; font: italic 700 1.7rem/1 var(--font-serif); box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px var(--gold);
+}
+.account-who { min-width: 0; display: grid; }
+.account-who strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.05rem; }
+.account-who span { color: var(--muted); font-size: .86rem; overflow: hidden; text-overflow: ellipsis; }
+.account-nav { display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.account-nav a, .account-nav button {
+    display: block; width: 100%; padding: 13px 18px; border: none; border-bottom: 1px solid var(--line); background: none;
+    font: inherit; font-size: .95rem; text-align: left; color: var(--brown); cursor: pointer; transition: .15s;
+}
+.account-nav form:last-child button { border-bottom: none; }
+.account-nav a:hover, .account-nav button:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.account-nav a.active { background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
+
+.account-main { min-width: 0; display: grid; gap: 18px; }
+.stat-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, 1fr); }
+.stat { display: grid; gap: 4px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.stat-num { font: 700 1.6rem/1.2 var(--font-serif); color: var(--accent-dark); }
+.stat-label { color: var(--muted); font-size: .84rem; }
+.last-order { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; background: var(--accent-soft); border: 1px solid var(--line); border-radius: 6px; transition: .15s; }
+.last-order:hover { border-color: var(--accent); }
+.account-panel { padding: 24px 26px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.account-panel h2 { font-size: 1.35rem; color: var(--accent-dark); }
+.panel-sub { margin: 4px 0 18px; color: var(--muted); font-size: .9rem; }
+.account-panel .checkout-form { padding: 0; border: none; background: none; box-shadow: none; }
+.account-panel .btn { margin-top: 6px; }
+.form-grid { display: grid; gap: 0 18px; grid-template-columns: 1fr 1fr; }
+.form-grid .wide { grid-column: 1 / -1; }
+.form-grid input[type=text], .form-grid input[type=email], .form-grid input[type=date] { width: 100%; }
+.help-text { margin-top: 6px; color: var(--muted); font-size: .82rem; }
+.help-text ul { margin: 4px 0 0 18px; }
+.account-panel .order-list { margin-top: 16px; }
+@media (max-width: 860px) {
+    .account-layout { grid-template-columns: 1fr; }
+    .account-side { position: static; }
+    .account-nav { grid-template-columns: repeat(2, 1fr); }
+    .account-nav a, .account-nav button { border-right: 1px solid var(--line); }
+    .stat-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+}
+
 /* ===================== Chế độ tối ===================== */
 html[data-theme="dark"] {
     color-scheme: dark;
@@ -413,3 +460,23 @@ html[data-theme="dark"] .st-confirmed  { background: #1f2d44; color: #9cc3f2; }
 html[data-theme="dark"] .st-delivering { background: #2f2748; color: #c9b4f5; }
 html[data-theme="dark"] .st-completed, html[data-theme="dark"] .verified { background: #1c3a2a; color: #8fdcae; }
 html[data-theme="dark"] .st-cancelled  { background: #432024; color: #f2a0a6; }
+
+/* Khách hàng nói gì */
+.testi-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); padding-bottom: 8px; }
+.testi-card { margin: 0; background: var(--surface); border: 1px solid var(--line); border-top: 2px solid var(--gold); border-radius: 4px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.testi-card blockquote { margin: 0; color: var(--brown); font-style: italic; line-height: 1.6; flex: 1; }
+.testi-card figcaption { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: var(--muted); }
+.testi-card figcaption > span:last-child { display: flex; flex-direction: column; }
+.testi-card figcaption strong { color: var(--accent-dark); }
+.testi-card figcaption a { color: var(--muted); }
+.testi-card figcaption a:hover { color: var(--accent); }
+
+/* Dải cam kết dưới banner + trang chính sách */
+.home-perks { margin-top: 28px; }
+.policy-tabs { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 26px; }
+.policy-tabs a { padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: .92rem; }
+.policy-tabs a:hover { color: var(--accent-dark); border-color: var(--accent); }
+.policy-tabs a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.policy h2 { font-size: 1.25rem; color: var(--accent-dark); margin: 26px 0 10px; }
+.policy-contact { margin-top: 30px; padding: 16px 20px; background: var(--accent-soft); border-left: 3px solid var(--gold); border-radius: 4px; }
+.policy-contact a { color: var(--accent-dark); font-weight: 600; }

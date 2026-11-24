@@ -16,10 +16,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600;1,700&display=swap">
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'core/css/components.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'core/css/pages.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'core/css/shop.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'core/css/components.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'core/css/pages.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'core/css/shop.css' %}?v=8">
 </head>
 <body>
 {% with view=request.resolver_match.view_name %}
@@ -64,6 +64,7 @@
                         <span class="um-name">{{ user.first_name|default:user.username }}</span>
                     </summary>
                     <div class="menu">
+                        <a href="{% url 'accounts:profile' %}">Thông tin cá nhân</a>
                         <a href="{% url 'accounts:orders' %}">Đơn hàng của tôi</a>
                         {% if user.is_staff %}<a href="{% url 'admin:index' %}">Trang quản trị</a>{% endif %}
                         <form method="post" action="{% url 'accounts:logout' %}">
@@ -121,6 +122,7 @@
             </nav>
             <div class="mobile-auth">
                 {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}">Thông tin cá nhân</a>
                     <a href="{% url 'accounts:orders' %}">Đơn hàng của tôi</a>
                     <form method="post" action="{% url 'accounts:logout' %}">
                         {% csrf_token %}
@@ -139,9 +141,9 @@
 {% if messages %}
     <div class="container messages">
         {% for m in messages %}
-            <div class="msg msg-{{ m.tags }}">
+            <div class="msg msg-{{ m.level_tag }}">
                 {{ m }}
-                {% if m.tags == "success" %}<a href="{% url 'orders:cart' %}">Xem giỏ hàng →</a>{% endif %}
+                {% if "cart" in m.extra_tags %}<a href="{% url 'orders:cart' %}">Xem giỏ hàng →</a>{% endif %}
             </div>
         {% endfor %}
     </div>
@@ -173,9 +175,13 @@
                 <li><a href="{% url 'core:contact' %}">Hệ thống cửa hàng</a></li>
                 <li><a href="{% url 'content:news_list' %}">Tin tức &amp; Khuyến mại</a></li>
                 <li><a href="{% url 'content:jobs' %}">Tuyển dụng</a></li>
+                <li><a href="{% url 'core:policy' 'giao-hang' %}">Chính sách giao hàng</a></li>
+                <li><a href="{% url 'core:policy' 'doi-tra' %}">Chính sách đổi trả</a></li>
+                <li><a href="{% url 'core:policy' 'bao-mat' %}">Chính sách bảo mật</a></li>
                 <li><a href="{% url 'products:home' %}#san-pham">Tất cả sản phẩm</a></li>
                 <li><a href="{% url 'orders:cart' %}">Giỏ hàng</a></li>
                 <li><a href="{% if user.is_authenticated %}{% url 'accounts:orders' %}{% else %}{% url 'accounts:login' %}{% endif %}">Tra cứu đơn hàng</a></li>
+                {% if user.is_authenticated %}<li><a href="{% url 'accounts:profile' %}">Tài khoản của tôi</a></li>{% endif %}
             </ul>
         </div>
         <div>
@@ -213,6 +219,6 @@
 </div>
 
 {% endwith %}
-<script src="{% static 'core/js/shop.js' %}?v=5" defer></script>
+<script src="{% static 'core/js/shop.js' %}?v=6" defer></script>
 </body>
 </html>

@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% load shop_tags %}{% shop_info as shop %}
+
+{% block title %}{{ page.title }} – {{ shop.name }}{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <div class="page-hero">
+        <h1>{{ page.title }}</h1>
+        <p>{{ page.intro }}</p>
+    </div>
+
+    <nav class="policy-tabs" aria-label="Chính sách">
+        {% for key, title in links %}
+            <a href="{% url 'core:policy' key %}" class="{% if key == slug %}active{% endif %}">{{ title }}</a>
+        {% endfor %}
+    </nav>
+
+    <div class="prose policy">
+        {% for heading, paragraphs in page.sections %}
+            <h2>{{ heading }}</h2>
+            {% for text in paragraphs %}<p>{{ text }}</p>{% endfor %}
+        {% endfor %}
+        <p class="policy-contact">Cần hỗ trợ thêm? Gọi <a href="tel:{{ shop.phone|digits }}">{{ shop.phone }}</a> hoặc email <a href="mailto:{{ shop.email }}">{{ shop.email }}</a>.</p>
+    </div>
+</main>
+{% endblock %}

@@ -25,6 +25,17 @@
     </div>
 </div>
 
+<section class="container home-perks" aria-label="Cam kết của cửa hàng">
+    <div class="perks">
+        {% for p in shop.promos %}
+            <div class="perk">
+                <span class="perk-icon" aria-hidden="true">{{ p.icon }}</span>
+                <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
 <main class="container" id="san-pham">
 
     {% if show_highlights %}
@@ -152,6 +163,29 @@
             {% for a in news_list %}{% include "content/_article_card.html" %}{% endfor %}
         </div>
         <p class="sec-more"><a class="btn btn-outline" href="{% url 'content:news_list' %}">Xem tất cả bài viết</a></p>
+    </section>
+    {% endif %}
+
+    {% if show_highlights and testimonials %}
+    <section class="shelf">
+        <div class="sec-head">
+            <span class="sec-kicker">✦ Testimonials</span>
+            <h2>Khách hàng nói gì</h2>
+            <p>Những chia sẻ thật từ khách đã thưởng thức bánh của {{ shop.name }}.</p>
+        </div>
+        <div class="testi-grid">
+            {% for r in testimonials %}
+            <figure class="testi-card">
+                <span class="stars" style="--rating: {{ r.rating }}" aria-label="{{ r.rating }} sao"></span>
+                <blockquote>{{ r.comment|truncatechars:220 }}</blockquote>
+                <figcaption>
+                    <span class="avatar">{{ r.user.first_name|default:r.user.username|slice:":1"|upper }}</span>
+                    <span><strong>{{ r.user.first_name|default:r.user.username }}</strong>
+                    <a href="{% url 'products:detail' r.product.slug %}#reviews">về {{ r.product.name }}</a></span>
+                </figcaption>
+            </figure>
+            {% endfor %}
+        </div>
     </section>
     {% endif %}
 

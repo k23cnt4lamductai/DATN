@@ -7,4 +7,5 @@ app_name = "core"
 urlpatterns = [
     path("gioi-thieu/", views.about, name="about"),
     path("lien-he/", views.contact, name="contact"),
+    path("chinh-sach/<slug:slug>/", views.policy, name="policy"),
 ]

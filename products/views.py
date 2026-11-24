@@ -114,11 +114,18 @@ def home(request):
         not (flt["category"] or flt["q"] or has_price)
         and flt["sort"] == DEFAULT_SORT and page_obj.number == 1
     )
-    bestsellers, newest = [], []
+    bestsellers, newest, testimonials = [], [], []
     if show_highlights:
         shelf = with_sold(with_ratings(Product.objects.filter(is_available=True).select_related("category")))
         bestsellers = list(shelf.filter(sold__gt=0).order_by("-sold", "-created_at")[:4])
         newest = list(shelf.order_by("-created_at", "-pk")[:4])
+        # "Khách hàng nói gì": đánh giá 4-5 sao có nhận xét, lấy sẵn từ bảng Review
+        testimonials = list(
+            Review.objects.filter(is_visible=True, rating__gte=4, product__is_available=True)
+            .exclude(comment="")
+            .select_related("user", "product")
+            .order_by("-rating", "-created_at")[:3]
+        )
 
     return render(request, "products/home.html", {
         "products": page_obj,
@@ -142,6 +149,7 @@ def home(request):
         "show_highlights": show_highlights,
         "bestsellers": bestsellers,
         "newest": newest,
+        "testimonials": testimonials,
     })
 
 

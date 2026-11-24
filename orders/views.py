@@ -52,7 +52,7 @@ def cart_add(request, product_id):
             )
         else:
             cart.set_quantity(product.id, wanted)
-            messages.success(request, f"Đã thêm {quantity} × {product.name} vào giỏ hàng.")
+            messages.success(request, f"Đã thêm {quantity} × {product.name} vào giỏ hàng.", extra_tags="cart")
 
     if "buy_now" in request.POST and product.stock > 0:
         return redirect("orders:cart")
@@ -145,9 +145,9 @@ def checkout(request):
             last = Order.objects.filter(user=request.user).first()  # đơn gần nhất
             initial["full_name"] = request.user.get_full_name() or (last.full_name if last else "")
             initial["email"] = request.user.email
-            if last:
-                initial["phone"] = last.phone
-                initial["address"] = last.address
+            saved = getattr(request.user, "profile", None)   # thông tin lưu ở trang cá nhân
+            initial["phone"] = (saved.phone if saved else "") or (last.phone if last else "")
+            initial["address"] = (saved.address if saved else "") or (last.address if last else "")
         form = CheckoutForm(initial=initial)
 
     return render(request, "orders/checkout.html", {

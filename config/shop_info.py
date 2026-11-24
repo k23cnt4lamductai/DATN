@@ -45,5 +45,6 @@ SHOP_INFO = {
         {"icon": "🎂", "title": "Bánh làm mới mỗi ngày", "text": "Làm thủ công, không để bánh tồn lâu."},
         {"icon": "🚚", "title": "Giao hàng tận nơi", "text": "Chọn ngày muốn nhận ngay khi đặt hàng."},
         {"icon": "💝", "title": "Nhận làm theo yêu cầu", "text": "Ghi chú chữ trên bánh, giờ nhận... ở bước đặt hàng."},
+        {"icon": "🔄", "title": "Đổi trả nếu bánh lỗi", "text": "Hỗ trợ đổi hoặc hoàn tiền khi bánh sai, hỏng."},
     ],
 }
