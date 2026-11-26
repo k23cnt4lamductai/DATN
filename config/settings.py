@@ -143,5 +143,19 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },  
 }
+# Gửi email thật qua Gmail: đặt 2 biến môi trường EMAIL_HOST_USER (địa chỉ Gmail) và
+# EMAIL_HOST_PASSWORD (Mật khẩu ứng dụng 16 ký tự). Không đặt thì email chỉ in ra cửa sổ terminal.
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = f'Tài Bakery <{EMAIL_HOST_USER}>'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'Tài Bakery <no-reply@taibakery.example>'
+
 # Giao diện trang quản trị (django-jazzmin)
 from .admin_theme import JAZZMIN_SETTINGS, JAZZMIN_UI_TWEAKS  # noqa

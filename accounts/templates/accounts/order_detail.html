@@ -51,11 +51,15 @@
             {% if order.note %}
                 <div class="summary-row"><span>Ghi chú</span><span>{{ order.note }}</span></div>
             {% endif %}
+            {% if order.discount %}
+                <div class="summary-row discount-row"><span>Mã {{ order.coupon_code }}</span><span>−{{ order.discount|vnd }}</span></div>
+            {% endif %}
             <div class="summary-row total">
                 <span>Tổng cộng</span>
                 <strong>{{ order.total|vnd }}</strong>
             </div>
         </aside>
     </div>
+    {% include "orders/_bank_box.html" %}
 </main>
 {% endblock %}

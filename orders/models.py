@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import F
+from django.utils import timezone
 
 from products.models import Product
 
@@ -40,7 +41,12 @@ class Order(models.Model):
         "Trạng thái", max_length=12,
         choices=Status.choices, default=Status.PENDING,
     )
-    total = models.DecimalField("Tổng tiền (VNĐ)", max_digits=12, decimal_places=0, default=0)
+    total = models.DecimalField("Tổng tiền (VNĐ)", max_digits=12, decimal_places=0, default=0,
+                                help_text="Số tiền khách phải trả (đã trừ giảm giá).")
+    coupon_code = models.CharField("Mã giảm giá", max_length=30, blank=True, default="")
+    discount = models.DecimalField("Giảm giá (VNĐ)", max_digits=12, decimal_places=0, default=0)
+    is_paid = models.BooleanField("Đã thanh toán", default=False,
+                                  help_text="Tick khi đã nhận được tiền chuyển khoản.")
 
     created_at = models.DateTimeField("Ngày đặt", auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,7 +62,8 @@ class Order(models.Model):
         self._loaded_status = self.__dict__.get("status")
 
     def recalculate_total(self):
-        self.total = sum(item.subtotal for item in self.items.all())
+        items_total = sum(item.subtotal for item in self.items.all())
+        self.total = max(items_total - self.discount, 0)
         self.save(update_fields=["total", "updated_at"])
 
     # ---------- Tồn kho theo trạng thái đơn ----------
@@ -148,3 +155,65 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_name} x {self.quantity}"
+
+
+def _money(value):
+    return f"{int(value):,}".replace(",", ".") + "đ"
+
+
+class Coupon(models.Model):
+    """Mã giảm giá: giảm theo % hoặc theo số tiền cố định."""
+
+    class Kind(models.TextChoices):
+        PERCENT = "percent", "Giảm theo %"
+        FIXED = "fixed", "Giảm số tiền cố định"
+
+    code = models.CharField("Mã", max_length=30, unique=True,
+                            help_text="Viết liền, không dấu. Ví dụ: TAI10 (tự đổi thành chữ hoa).")
+    description = models.CharField("Mô tả", max_length=200, blank=True)
+    kind = models.CharField("Loại giảm", max_length=10, choices=Kind.choices, default=Kind.PERCENT)
+    value = models.PositiveIntegerField("Mức giảm", help_text="Số % (ví dụ 10) hoặc số tiền VNĐ (ví dụ 20000).")
+    min_order = models.PositiveIntegerField("Đơn tối thiểu (VNĐ)", default=0)
+    max_discount = models.PositiveIntegerField("Giảm tối đa (VNĐ)", null=True, blank=True,
+                                               help_text="Chỉ dùng cho loại %. Để trống nếu không giới hạn.")
+    starts_at = models.DateTimeField("Bắt đầu", null=True, blank=True)
+    ends_at = models.DateTimeField("Kết thúc", null=True, blank=True)
+    usage_limit = models.PositiveIntegerField("Số lượt dùng tối đa", null=True, blank=True,
+                                              help_text="Để trống nếu không giới hạn.")
+    used_count = models.PositiveIntegerField("Đã dùng", default=0)
+    is_active = models.BooleanField("Đang bật", default=True)
+
+    class Meta:
+        verbose_name = "Mã giảm giá"
+        verbose_name_plural = "Mã giảm giá"
+        ordering = ["-id"]
+
+    def save(self, *args, **kwargs):
+        self.code = (self.code or "").strip().upper()
+        super().save(*args, **kwargs)
+
+    def apply_to(self, subtotal, now=None):
+        """Trả về (số tiền giảm, thông báo lỗi). Lỗi là None nếu mã dùng được."""
+        now = now or timezone.now()
+        subtotal = int(subtotal)
+        if not self.is_active:
+            return 0, "Mã giảm giá không còn hiệu lực."
+        if self.starts_at and now < self.starts_at:
+            return 0, "Mã giảm giá chưa đến thời gian áp dụng."
+        if self.ends_at and now > self.ends_at:
+            return 0, "Mã giảm giá đã hết hạn."
+        if self.usage_limit is not None and self.used_count >= self.usage_limit:
+            return 0, "Mã giảm giá đã hết lượt sử dụng."
+        if subtotal < self.min_order:
+            return 0, f"Mã chỉ áp dụng cho đơn từ {_money(self.min_order)}."
+
+        if self.kind == self.Kind.PERCENT:
+            discount = subtotal * self.value // 100
+            if self.max_discount:
+                discount = min(discount, self.max_discount)
+        else:
+            discount = self.value
+        return min(discount, subtotal), None
+
+    def __str__(self):
+        return self.code

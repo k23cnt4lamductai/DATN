@@ -14,7 +14,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from core.templatetags.vnd import vnd
 
-from .models import Order, OrderItem
+from .models import Coupon, Order, OrderItem
 from .reports import build_customers, build_day_report, build_history
 
 S = Order.Status
@@ -37,11 +37,12 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "full_name", "phone", "total_vnd", "payment_method",
+        "id", "full_name", "phone", "total_vnd", "payment_method", "is_paid",
         "status_badge", "created_at", "action_buttons",
     )
     list_display_links = ("id", "full_name")
-    list_filter = ("status", "payment_method", "created_at")
+    list_editable = ("is_paid",)
+    list_filter = ("status", "payment_method", "is_paid", "created_at")
     search_fields = ("full_name", "phone", "email")
     readonly_fields = ("total", "created_at", "updated_at", "invoice_link")
     inlines = [OrderItemInline]
@@ -225,6 +226,28 @@ class OrderAdmin(admin.ModelAdmin):
         ):
             target = reverse("admin:orders_order_changelist")
         return redirect(target)
+
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ("code", "muc_giam", "min_order", "luot_dung", "ends_at", "is_active")
+    list_editable = ("is_active",)
+    list_filter = ("kind", "is_active")
+    search_fields = ("code", "description")
+    readonly_fields = ("used_count",)
+
+    @admin.display(description="Mức giảm")
+    def muc_giam(self, obj):
+        if obj.kind == Coupon.Kind.PERCENT:
+            text = f"{obj.value}%"
+            if obj.max_discount:
+                text += f" (tối đa {vnd(obj.max_discount)})"
+            return text
+        return vnd(obj.value)
+
+    @admin.display(description="Lượt dùng")
+    def luot_dung(self, obj):
+        return f"{obj.used_count}/{obj.usage_limit}" if obj.usage_limit is not None else f"{obj.used_count}/∞"
 
 
 # ---- Tên trang quản trị + trang tổng quan (doanh thu, đơn mới, bánh sắp hết) ----

@@ -143,3 +143,23 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.full_name} – {self.job}"
+
+
+class Subscriber(models.Model):
+    """Email khách đăng ký nhận tin khuyến mại."""
+
+    email = models.EmailField("Email", unique=True)
+    is_active = models.BooleanField("Đang nhận tin", default=True)
+    created_at = models.DateTimeField("Ngày đăng ký", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Người đăng ký nhận tin"
+        verbose_name_plural = "Người đăng ký nhận tin"
+        ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        self.email = (self.email or "").strip().lower()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.email

@@ -62,6 +62,13 @@
                 </form>
             {% endif %}
 
+            {% wishlist_ids as wl %}
+            <form class="wish-detail" method="post" action="{% url 'products:wishlist_toggle' product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="btn btn-outline btn-small">{% if product.id in wl %}♥ Đã yêu thích – bấm để bỏ{% else %}♡ Thêm vào yêu thích{% endif %}</button>
+            </form>
+
             {% shop_info as shop %}
             {% with ing=product.ingredient_text allergens=product.allergen_text %}
             {% if product.weight or product.shelf_life or product.storage or ing or shop.delivery_note %}

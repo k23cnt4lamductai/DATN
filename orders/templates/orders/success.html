@@ -18,6 +18,9 @@
                     <span>{{ item.subtotal|vnd }}</span>
                 </div>
             {% endfor %}
+            {% if order.discount %}
+                <div class="summary-row discount-row"><span>Mã {{ order.coupon_code }}</span><span>−{{ order.discount|vnd }}</span></div>
+            {% endif %}
             <div class="summary-row total">
                 <span>Tổng cộng</span>
                 <strong>{{ order.total|vnd }}</strong>
@@ -26,6 +29,8 @@
             <div class="summary-row"><span>Thanh toán</span><span>{{ order.get_payment_method_display }}</span></div>
             <div class="summary-row"><span>Trạng thái</span><span>{{ order.get_status_display }}</span></div>
         </div>
+
+        {% include "orders/_bank_box.html" %}
 
         <a class="btn" href="{% url 'products:home' %}">Tiếp tục mua sắm</a>
         {% if user.is_authenticated %}

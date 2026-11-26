@@ -41,10 +41,18 @@ SHOP_INFO = {
     ],
 
     # ---------- Điểm nổi bật dưới banner trang chủ ----------
+    # Tài khoản nhận chuyển khoản (DỮ LIỆU MẪU - thay bằng tài khoản thật).
+    # bank_id là mã ngân hàng theo VietQR: VCB, TCB, MB, ACB, BIDV, ICB (VietinBank), VPB, TPB...
+    "bank": {
+        "bank_id": "VCB",
+        "bank_name": "Vietcombank",
+        "account_no": "0123456789",
+        "account_name": "TAI BAKERY",
+    },
     "promos": [
-        {"icon": "🎂", "title": "Bánh làm mới mỗi ngày", "text": "Làm thủ công, không để bánh tồn lâu."},
-        {"icon": "🚚", "title": "Giao hàng tận nơi", "text": "Chọn ngày muốn nhận ngay khi đặt hàng."},
-        {"icon": "💝", "title": "Nhận làm theo yêu cầu", "text": "Ghi chú chữ trên bánh, giờ nhận... ở bước đặt hàng."},
-        {"icon": "🔄", "title": "Đổi trả nếu bánh lỗi", "text": "Hỗ trợ đổi hoặc hoàn tiền khi bánh sai, hỏng."},
+        {"icon": "🎂", "title": "Bánh làm mới mỗi ngày", "text": "Làm thủ công, không để bánh tồn lâu.", "link": "/#san-pham"},
+        {"icon": "🚚", "title": "Giao hàng tận nơi", "text": "Chọn ngày muốn nhận ngay khi đặt hàng.", "link": "/chinh-sach/giao-hang/"},
+        {"icon": "💝", "title": "Nhận làm theo yêu cầu", "text": "Ghi chú chữ trên bánh, giờ nhận... ở bước đặt hàng.", "link": "/lien-he/#dat-banh"},
+        {"icon": "🔄", "title": "Đổi trả nếu bánh lỗi", "text": "Hỗ trợ đổi hoặc hoàn tiền khi bánh sai, hỏng.", "link": "/chinh-sach/doi-tra/"},
     ],
 }

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Article, JobApplication, JobPosting
+from .models import Article, JobApplication, JobPosting, Subscriber
 
 
 @admin.register(Article)
@@ -56,3 +56,12 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    list_display = ("email", "created_at", "is_active")
+    list_editable = ("is_active",)
+    list_filter = ("is_active",)
+    search_fields = ("email",)
+    date_hierarchy = "created_at"

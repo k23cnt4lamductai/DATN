@@ -8,11 +8,18 @@ from products.models import Product
 
 from .cart import Cart
 from .forms import CheckoutForm
-from .models import Order, OrderItem
+from .models import Coupon, Order, OrderItem
 
 
 class StockError(Exception):
     """Hết hàng / không đủ hàng khi đặt."""
+
+
+class CouponError(Exception):
+    """Mã giảm giá không còn dùng được lúc đặt hàng."""
+
+
+COUPON_SESSION_KEY = "coupon_code"
 
 
 def _to_int(value, default=1):
@@ -28,10 +35,58 @@ def _cart_summary(cart):
     return items, total
 
 
+def _pricing(request, subtotal):
+    """Áp mã giảm giá đang lưu trong session (nếu còn hợp lệ). Trả về (coupon, giảm giá, phải trả)."""
+    code = request.session.get(COUPON_SESSION_KEY)
+    if not code:
+        return None, 0, subtotal
+    coupon = Coupon.objects.filter(code=code).first()
+    if coupon is None:
+        discount, error = 0, "Mã giảm giá không tồn tại."
+    else:
+        discount, error = coupon.apply_to(subtotal)
+    if error:
+        request.session.pop(COUPON_SESSION_KEY, None)
+        messages.warning(request, error)
+        return None, 0, subtotal
+    return coupon, discount, subtotal - discount
+
+
 # ---------------------------------------------------------------- Giỏ hàng
 def cart_detail(request):
     items, total = _cart_summary(Cart(request))
-    return render(request, "orders/cart.html", {"items": items, "total": total})
+    coupon, discount, final_total = _pricing(request, total) if items else (None, 0, total)
+    return render(request, "orders/cart.html", {
+        "items": items, "total": total,
+        "coupon": coupon, "discount": discount, "final_total": final_total,
+    })
+
+
+@require_POST
+def coupon_apply(request):
+    code = (request.POST.get("code") or "").strip().upper()
+    _, subtotal = _cart_summary(Cart(request))
+    if not code:
+        messages.error(request, "Vui lòng nhập mã giảm giá.")
+    else:
+        coupon = Coupon.objects.filter(code=code).first()
+        if coupon is None:
+            messages.error(request, "Mã giảm giá không tồn tại.")
+        else:
+            _, error = coupon.apply_to(subtotal)
+            if error:
+                messages.error(request, error)
+            else:
+                request.session[COUPON_SESSION_KEY] = coupon.code
+                messages.success(request, f"Đã áp dụng mã {coupon.code}.")
+    return redirect("orders:cart")
+
+
+@require_POST
+def coupon_remove(request):
+    request.session.pop(COUPON_SESSION_KEY, None)
+    messages.info(request, "Đã bỏ mã giảm giá.")
+    return redirect("orders:cart")
 
 
 @require_POST
@@ -98,6 +153,7 @@ def checkout(request):
     if not items:
         messages.info(request, "Giỏ hàng đang trống, hãy chọn vài chiếc bánh nhé.")
         return redirect("orders:cart")
+    coupon, discount, final_total = _pricing(request, total)
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
@@ -127,8 +183,27 @@ def checkout(request):
                         product.save(update_fields=["stock", "updated_at"])
                         grand_total += product.price * quantity
 
-                    order.total = grand_total
-                    order.save(update_fields=["total", "updated_at"])
+                    discount = 0
+                    code = request.session.get(COUPON_SESSION_KEY)
+                    if code:
+                        # Khóa dòng mã giảm giá để 2 đơn cùng lúc không vượt quá số lượt dùng
+                        applied = Coupon.objects.select_for_update().filter(code=code).first()
+                        error = "Mã giảm giá không tồn tại."
+                        if applied:
+                            discount, error = applied.apply_to(grand_total)
+                        if error:
+                            raise CouponError(error)
+                        applied.used_count += 1
+                        applied.save(update_fields=["used_count"])
+                        order.coupon_code = applied.code
+
+                    order.discount = discount
+                    order.total = grand_total - discount
+                    order.save(update_fields=["total", "discount", "coupon_code", "updated_at"])
+            except CouponError as exc:
+                request.session.pop(COUPON_SESSION_KEY, None)
+                messages.error(request, f"{exc} Đơn hàng chưa được đặt, vui lòng kiểm tra lại.")
+                return redirect("orders:cart")
             except StockError as exc:
                 messages.error(
                     request,
@@ -137,6 +212,7 @@ def checkout(request):
                 return redirect("orders:cart")
 
             cart.clear()
+            request.session.pop(COUPON_SESSION_KEY, None)
             request.session["last_order_id"] = order.id
             return redirect("orders:success")
     else:
@@ -152,6 +228,7 @@ def checkout(request):
 
     return render(request, "orders/checkout.html", {
         "form": form, "items": items, "total": total,
+        "coupon": coupon, "discount": discount, "final_total": final_total,
     })
 
 

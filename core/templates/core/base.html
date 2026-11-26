@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}?v=6">
     <link rel="stylesheet" href="{% static 'core/css/components.css' %}?v=6">
     <link rel="stylesheet" href="{% static 'core/css/pages.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'core/css/shop.css' %}?v=8">
+    <link rel="stylesheet" href="{% static 'core/css/shop.css' %}?v=11">
 </head>
 <body>
 {% with view=request.resolver_match.view_name %}
@@ -66,6 +66,7 @@
                     <div class="menu">
                         <a href="{% url 'accounts:profile' %}">Thông tin cá nhân</a>
                         <a href="{% url 'accounts:orders' %}">Đơn hàng của tôi</a>
+                        <a href="{% url 'products:wishlist' %}">Bánh yêu thích</a>
                         {% if user.is_staff %}<a href="{% url 'admin:index' %}">Trang quản trị</a>{% endif %}
                         <form method="post" action="{% url 'accounts:logout' %}">
                             {% csrf_token %}
@@ -78,6 +79,10 @@
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 20.5c0-4.1 3.8-6.6 8.5-6.6s8.5 2.5 8.5 6.6z"/></svg>
                 </a>
             {% endif %}
+
+            <a class="icon-btn" href="{% url 'products:wishlist' %}" aria-label="Yêu thích" title="Bánh yêu thích">
+                <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.8a4.3 4.3 0 0 1 7.5 2.7c0 5.4-7.5 10-7.5 10z"/></svg>
+            </a>
 
             <a class="icon-btn cart-link" href="{% url 'orders:cart' %}" aria-label="Giỏ hàng">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
@@ -118,6 +123,7 @@
                 <a href="{% url 'content:news_list' %}">Tin tức &amp; Khuyến mại</a>
                 <a href="{% url 'content:jobs' %}">Tuyển dụng</a>
                 <a href="{% url 'core:contact' %}">Liên hệ</a>
+                <a href="{% url 'products:wishlist' %}">Bánh yêu thích</a>
                 <a href="{% url 'orders:cart' %}">Giỏ hàng</a>
             </nav>
             <div class="mobile-auth">
@@ -140,12 +146,12 @@
 
 {% if messages %}
     <div class="container messages">
-        {% for m in messages %}
+        {% for m in messages %}{% if "newsletter" not in m.extra_tags %}
             <div class="msg msg-{{ m.level_tag }}">
                 {{ m }}
                 {% if "cart" in m.extra_tags %}<a href="{% url 'orders:cart' %}">Xem giỏ hàng →</a>{% endif %}
             </div>
-        {% endfor %}
+        {% endif %}{% endfor %}
     </div>
 {% endif %}
 
@@ -161,6 +167,24 @@
         </div>
     </nav>
     {% endif %}
+
+    <section class="newsletter" id="newsletter" aria-label="Đăng ký nhận tin">
+        <div class="container newsletter-inner">
+            <div>
+                <h4>Nhận ưu đãi từ {{ shop.name }}</h4>
+                <p>Đăng ký email để biết sớm các chương trình khuyến mại và bánh mới.</p>
+            </div>
+            <form method="post" action="{% url 'content:subscribe' %}" class="newsletter-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <input type="email" name="email" placeholder="Email của bạn" required aria-label="Email nhận tin">
+                <button type="submit">Đăng ký</button>
+            </form>
+            {% for m in messages %}{% if "newsletter" in m.extra_tags %}
+                <div class="newsletter-msg msg-{{ m.level_tag }}">{{ m }}</div>
+            {% endif %}{% endfor %}
+        </div>
+    </section>
 
     <div class="container footer-grid">
         <div>
@@ -179,6 +203,7 @@
                 <li><a href="{% url 'core:policy' 'doi-tra' %}">Chính sách đổi trả</a></li>
                 <li><a href="{% url 'core:policy' 'bao-mat' %}">Chính sách bảo mật</a></li>
                 <li><a href="{% url 'products:home' %}#san-pham">Tất cả sản phẩm</a></li>
+                <li><a href="{% url 'products:wishlist' %}">Bánh yêu thích</a></li>
                 <li><a href="{% url 'orders:cart' %}">Giỏ hàng</a></li>
                 <li><a href="{% if user.is_authenticated %}{% url 'accounts:orders' %}{% else %}{% url 'accounts:login' %}{% endif %}">Tra cứu đơn hàng</a></li>
                 {% if user.is_authenticated %}<li><a href="{% url 'accounts:profile' %}">Tài khoản của tôi</a></li>{% endif %}
@@ -220,5 +245,6 @@
 
 {% endwith %}
 <script src="{% static 'core/js/shop.js' %}?v=6" defer></script>
+<script src="{% static 'core/js/carousel.js' %}?v=2" defer></script>
 </body>
 </html>

@@ -17,21 +17,13 @@
     </div>
 </section>
 
-<div class="quick-links">
-    <div class="container">
-        <a href="{% url 'core:contact' %}"><span class="qi">📍</span> Hệ thống cửa hàng</a>
-        <a href="{{ popular_url }}"><span class="qi">🔥</span> Bánh bán chạy</a>
-        <a href="{% url 'core:contact' %}#dat-banh"><span class="qi">🎁</span> Đặt bánh theo yêu cầu</a>
-    </div>
-</div>
-
 <section class="container home-perks" aria-label="Cam kết của cửa hàng">
     <div class="perks">
         {% for p in shop.promos %}
-            <div class="perk">
+            <a class="perk" href="{{ p.link|default:'#san-pham' }}">
                 <span class="perk-icon" aria-hidden="true">{{ p.icon }}</span>
                 <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 </section>
@@ -58,10 +50,13 @@
                     <h2>Bánh được yêu thích nhất</h2>
                     <p>Những chiếc bánh được khách hàng lựa chọn nhiều nhất tại {{ shop.name }}.</p>
                 </div>
-                <div class="grid">
-                    {% for p in bestsellers %}{% include "products/_card.html" %}{% endfor %}
+                <div class="carousel" data-carousel>
+                    <button class="car-btn prev" type="button" aria-label="Xem bánh trước">‹</button>
+                    <div class="car-track">
+                        {% for p in bestsellers %}<div class="car-item">{% include "products/_card.html" %}</div>{% endfor %}
+                    </div>
+                    <button class="car-btn next" type="button" aria-label="Xem bánh tiếp theo">›</button>
                 </div>
-                <p class="sec-more"><a class="btn btn-outline" href="{{ popular_url }}">Xem tất cả bánh bán chạy</a></p>
             </section>
         {% endif %}
         {% if newest %}
@@ -70,8 +65,12 @@
                     <span class="sec-kicker">✦ New</span>
                     <h2>Bánh mới</h2>
                 </div>
-                <div class="grid">
-                    {% for p in newest %}{% include "products/_card.html" %}{% endfor %}
+                <div class="carousel" data-carousel>
+                    <button class="car-btn prev" type="button" aria-label="Xem bánh trước">‹</button>
+                    <div class="car-track">
+                        {% for p in newest %}<div class="car-item">{% include "products/_card.html" %}</div>{% endfor %}
+                    </div>
+                    <button class="car-btn next" type="button" aria-label="Xem bánh tiếp theo">›</button>
                 </div>
             </section>
         {% endif %}

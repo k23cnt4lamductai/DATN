@@ -58,9 +58,32 @@
 
             <aside class="summary">
                 <h2>Tóm tắt</h2>
+                <div class="summary-row"><span>Tạm tính</span><span>{{ total|vnd }}</span></div>
+                {% if coupon %}
+                    <div class="summary-row discount-row">
+                        <span>Mã {{ coupon.code }}</span>
+                        <span>−{{ discount|vnd }}</span>
+                    </div>
+                {% endif %}
                 <div class="summary-row total">
                     <span>Tổng cộng</span>
-                    <strong>{{ total|vnd }}</strong>
+                    <strong>{{ final_total|vnd }}</strong>
+                </div>
+
+                <div class="coupon-box">
+                    {% if coupon %}
+                        <form method="post" action="{% url 'orders:coupon_remove' %}" class="coupon-applied">
+                            {% csrf_token %}
+                            <span>✓ Đã áp dụng <strong>{{ coupon.code }}</strong></span>
+                            <button class="link-danger" type="submit">Bỏ mã</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'orders:coupon_apply' %}" class="coupon-form">
+                            {% csrf_token %}
+                            <input type="text" name="code" placeholder="Nhập mã giảm giá" autocomplete="off" aria-label="Mã giảm giá">
+                            <button class="btn btn-small btn-outline" type="submit">Áp dụng</button>
+                        </form>
+                    {% endif %}
                 </div>
                 <a class="btn btn-block" href="{% url 'orders:checkout' %}">Tiến hành đặt hàng</a>
                 <a class="link-back" href="{% url 'products:home' %}">← Tiếp tục chọn bánh</a>

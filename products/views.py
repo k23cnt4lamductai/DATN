@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.core.paginator import Paginator
 from django.db.models import Avg, Count, F, IntegerField, OuterRef, Q, Subquery, Sum, Value
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from core.templatetags.vnd import vnd
@@ -12,7 +14,7 @@ from orders.models import Order, OrderItem
 
 from .forms import ReviewForm
 from .listing import DEFAULT_SORT, PAGE_SIZE, SORTS, make_url, page_items, parse_filters
-from .models import Category, Product, Review
+from .models import Category, Product, Review, Wishlist
 
 
 def with_ratings(queryset):
@@ -117,8 +119,8 @@ def home(request):
     bestsellers, newest, testimonials = [], [], []
     if show_highlights:
         shelf = with_sold(with_ratings(Product.objects.filter(is_available=True).select_related("category")))
-        bestsellers = list(shelf.filter(sold__gt=0).order_by("-sold", "-created_at")[:4])
-        newest = list(shelf.order_by("-created_at", "-pk")[:4])
+        bestsellers = list(shelf.filter(sold__gt=0).order_by("-sold", "-created_at")[:8])
+        newest = list(shelf.order_by("-created_at", "-pk")[:8])
         # "Khách hàng nói gì": đánh giá 4-5 sao có nhận xét, lấy sẵn từ bảng Review
         testimonials = list(
             Review.objects.filter(is_visible=True, rating__gte=4, product__is_available=True)
@@ -236,3 +238,35 @@ def review_delete(request, slug):
     Review.objects.filter(product=product, user=request.user).delete()
     messages.info(request, "Đã xóa đánh giá của bạn.")
     return redirect(f"{product.get_absolute_url()}#reviews")
+
+
+# ---------------------------------------------------------------- Yêu thích
+@require_POST
+def wishlist_toggle(request, product_id):
+    product = get_object_or_404(Product, pk=product_id, is_available=True)
+    target = request.POST.get("next")
+    if not (target and url_has_allowed_host_and_scheme(
+            target, allowed_hosts={request.get_host()}, require_https=request.is_secure())):
+        target = product.get_absolute_url()
+
+    if not request.user.is_authenticated:
+        messages.info(request, "Hãy đăng nhập để lưu bánh vào danh sách yêu thích.")
+        return redirect_to_login(target, resolve_url("accounts:login"))
+
+    item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+    if created:
+        messages.success(request, f"Đã thêm {product.name} vào danh sách yêu thích.")
+    else:
+        item.delete()
+        messages.info(request, f"Đã bỏ {product.name} khỏi danh sách yêu thích.")
+    return redirect(target)
+
+
+@login_required(login_url="accounts:login")
+def wishlist(request):
+    ids = Wishlist.objects.filter(user=request.user).values_list("product_id", flat=True)
+    products = (
+        with_sold(with_ratings(Product.objects.filter(pk__in=ids, is_available=True).select_related("category")))
+        .order_by("-created_at")
+    )
+    return render(request, "products/wishlist.html", {"products": products})

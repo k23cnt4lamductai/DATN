@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+
+{% block title %}Bánh yêu thích – Tài Bakery{% endblock %}
+
+{% block content %}
+<main class="container page">
+    <h1 class="page-title">Bánh yêu thích của bạn</h1>
+
+    {% if products %}
+        <div class="grid">
+            {% for p in products %}{% include "products/_card.html" %}{% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <div class="big">♡</div>
+            <p>Bạn chưa lưu chiếc bánh nào.</p>
+            <p>Bấm vào biểu tượng trái tim trên mỗi chiếc bánh để lưu lại xem sau.</p>
+            <p><a href="{% url 'products:home' %}#san-pham">Đi chọn bánh thôi</a></p>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}

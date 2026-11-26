@@ -9,6 +9,7 @@
     <nav class="account-nav" aria-label="Tài khoản">
         <a href="{% url 'accounts:profile' %}" class="{% if account_active == 'profile' %}active{% endif %}">👤 Thông tin cá nhân</a>
         <a href="{% url 'accounts:orders' %}" class="{% if account_active == 'orders' %}active{% endif %}">📦 Đơn hàng của tôi</a>
+        <a href="{% url 'products:wishlist' %}">♡ Bánh yêu thích</a>
         <a href="{% url 'accounts:password_change' %}" class="{% if account_active == 'password' %}active{% endif %}">🔒 Đổi mật khẩu</a>
         <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}

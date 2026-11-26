@@ -44,9 +44,13 @@
                     <span>{{ item.subtotal|vnd }}</span>
                 </div>
             {% endfor %}
+            {% if coupon %}
+                <div class="summary-row"><span>Tạm tính</span><span>{{ total|vnd }}</span></div>
+                <div class="summary-row discount-row"><span>Mã {{ coupon.code }}</span><span>−{{ discount|vnd }}</span></div>
+            {% endif %}
             <div class="summary-row total">
                 <span>Tổng cộng</span>
-                <strong>{{ total|vnd }}</strong>
+                <strong>{{ final_total|vnd }}</strong>
             </div>
         </aside>
     </div>

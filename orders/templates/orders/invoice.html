@@ -67,6 +67,7 @@
             {% endfor %}
         </tbody>
         <tfoot>
+            {% if order.discount %}<tr><td colspan="4" class="num">Giảm giá ({{ order.coupon_code }})</td><td class="num">−{{ order.discount|vnd }}</td></tr>{% endif %}
             <tr><td colspan="4" class="num">Tổng cộng</td><td class="num">{{ order.total|vnd }}</td></tr>
         </tfoot>
     </table>

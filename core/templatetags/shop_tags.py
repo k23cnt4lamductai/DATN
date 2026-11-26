@@ -58,3 +58,17 @@ def latest_articles(count=3):
 def lines(value):
     """Tách văn bản nhiều dòng thành danh sách ý (bỏ gạch đầu dòng nếu có)."""
     return [ln.strip().lstrip("-•*· ").strip() for ln in str(value).splitlines() if ln.strip()]
+
+
+@register.simple_tag(takes_context=True)
+def wishlist_ids(context):
+    """Tập id bánh yêu thích của khách đang đăng nhập (chỉ truy vấn 1 lần mỗi request)."""
+    request = context.get("request")
+    if request is None or not request.user.is_authenticated:
+        return set()
+    cached = getattr(request, "_wishlist_ids", None)
+    if cached is None:
+        from products.models import Wishlist
+        cached = set(Wishlist.objects.filter(user=request.user).values_list("product_id", flat=True))
+        request._wishlist_ids = cached
+    return cached

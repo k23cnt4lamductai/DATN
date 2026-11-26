@@ -160,3 +160,27 @@ class ProductIngredient(models.Model):
     def __str__(self):
         return f"{self.product} - {self.ingredient}"
 
+
+class Wishlist(models.Model):
+    """Bánh khách đã bấm tim (danh sách yêu thích)."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="wishlist_items", verbose_name="Khách hàng",
+    )
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE,
+        related_name="wishlisted_by", verbose_name="Sản phẩm",
+    )
+    created_at = models.DateTimeField("Ngày thêm", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Sản phẩm yêu thích"
+        verbose_name_plural = "Sản phẩm yêu thích"
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "product"], name="unique_wishlist_per_user_product"),
+        ]
+
+    def __str__(self):
+        return f"{self.user} ♥ {self.product}"

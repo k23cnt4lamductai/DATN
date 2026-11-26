@@ -1,0 +1,22 @@
+{% load vnd payment_tags %}
+{% bank_transfer order as bank %}
+{% if bank %}
+<div class="bank-box">
+    <h2>Thanh toán chuyển khoản</h2>
+    {% if order.is_paid %}
+        <p class="bank-paid">✓ Cửa hàng đã nhận được thanh toán của bạn. Cảm ơn bạn!</p>
+    {% else %}
+        <p class="muted">Quét mã QR bằng ứng dụng ngân hàng hoặc chuyển khoản theo thông tin dưới đây. Cửa hàng sẽ xác nhận khi nhận được tiền.</p>
+        <div class="bank-grid">
+            <img class="bank-qr" src="{{ bank.qr_url }}" alt="Mã QR chuyển khoản đơn #{{ order.id }}" width="220" height="220" loading="lazy">
+            <dl class="bank-info">
+                <dt>Ngân hàng</dt><dd>{{ bank.bank_name }}</dd>
+                <dt>Số tài khoản</dt><dd><strong>{{ bank.account_no }}</strong></dd>
+                <dt>Chủ tài khoản</dt><dd>{{ bank.account_name }}</dd>
+                <dt>Số tiền</dt><dd><strong>{{ order.total|vnd }}</strong></dd>
+                <dt>Nội dung</dt><dd><strong>{{ bank.content }}</strong></dd>
+            </dl>
+        </div>
+    {% endif %}
+</div>
+{% endif %}
