@@ -10,8 +10,6 @@ class ArticleAdmin(admin.ModelAdmin):
     list_editable = ("is_published",)
     list_filter = ("kind", "is_published")
     search_fields = ("title", "summary", "body")
-    prepopulated_fields = {"slug": ("title",)}
-    date_hierarchy = "published_at"
 
     @admin.display(description="Ảnh")
     def thumb(self, obj):
@@ -37,7 +35,6 @@ class JobPostingAdmin(admin.ModelAdmin):
     list_editable = ("is_active",)
     list_filter = ("is_active", "job_type", "branch")
     search_fields = ("title", "description")
-    prepopulated_fields = {"slug": ("title",)}
     inlines = [JobApplicationInline]
 
     @admin.display(description="Hồ sơ")
@@ -52,7 +49,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
     list_filter = ("is_handled", "job")
     search_fields = ("full_name", "phone", "email")
     readonly_fields = ("job", "full_name", "phone", "email", "message", "created_at")
-    date_hierarchy = "created_at"
 
     def has_add_permission(self, request):
         return False
@@ -64,4 +60,3 @@ class SubscriberAdmin(admin.ModelAdmin):
     list_editable = ("is_active",)
     list_filter = ("is_active",)
     search_fields = ("email",)
-    date_hierarchy = "created_at"

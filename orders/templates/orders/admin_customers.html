@@ -1,24 +1,27 @@
 {% extends "admin/base_site.html" %}
 {% load vnd %}
 
+{% block content_title %}Khách hàng{% endblock %}
+
 {% block content %}
 <style>
     .cu {
-        --cu-card: #fff; --cu-line: #f0e2dc; --cu-text: #5a3e36; --cu-muted: #8d7b75; --cu-soft: #fdeef2; --cu-brand: #c9506f;
+        --cu-card: #fff; --cu-line: #e8ddd2; --cu-text: #3d2b22; --cu-muted: #86766d; --cu-soft: #f4ebe2; --cu-brand: #5c2f1f;
         color: var(--cu-text); margin-bottom: 30px;
     }
-    body.dark-mode .cu { --cu-card: #26232d; --cu-line: #3a3642; --cu-text: #eee6e2; --cu-muted: #a89c96; --cu-soft: #3a2530; --cu-brand: #f19ab0; }
+    body.dark-mode .cu { --cu-card: #2a211b; --cu-line: #3e322a; --cu-text: #f1e8df; --cu-muted: #a8998d; --cu-soft: #3b2c22; --cu-brand: #d9b27c; }
     .cu a { text-decoration: none; }
     .cu-stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 16px; }
-    .cu-card { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 14px; padding: 16px 18px; }
+    .cu-card { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 6px; padding: 16px 18px; }
     .cu-card .lbl { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--cu-muted); }
     .cu-card strong { display: block; font-size: 1.5rem; color: var(--cu-brand); line-height: 1.25; }
     .cu-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
     .cu-bar input[type=text] { padding: 8px 14px; min-width: 260px; border: 1px solid var(--cu-line); border-radius: 999px; background: var(--cu-card); color: var(--cu-text); }
-    .cu-section { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 14px; padding: 8px 20px 16px; }
+    .cu-section { background: var(--cu-card); border: 1px solid var(--cu-line); border-radius: 6px; padding: 8px 20px 16px; }
     .cu-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
     .cu-table th, .cu-table td { padding: 10px 8px; border-bottom: 1px solid var(--cu-line); text-align: left; vertical-align: middle; }
     .cu-table th { font-size: .74rem; text-transform: uppercase; color: var(--cu-muted); font-weight: 600; }
+    .cu-addr { max-width: 220px; font-size: .86rem; }
     .cu-table .num { text-align: right; white-space: nowrap; }
     .cu-table tr:last-child td { border-bottom: none; }
     .cu-wrap { overflow-x: auto; }
@@ -52,24 +55,28 @@
                 <table class="cu-table">
                     <thead>
                         <tr>
-                            <th>Khách hàng</th><th>Loại</th><th>Điện thoại</th><th>Email</th>
+                            <th>Khách hàng</th><th>Loại</th><th>Liên hệ</th><th>Địa chỉ</th><th>Tham gia</th>
                             <th class="num">Số đơn</th><th class="num">Tổng chi tiêu</th><th>Đơn gần nhất</th><th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for r in page.object_list %}
                             <tr>
-                                <td><strong>{{ r.name }}</strong></td>
+                                <td><strong>{{ r.name }}</strong>{% if r.username %}<br><span class="cu-muted">@{{ r.username }}</span>{% endif %}</td>
                                 <td>
                                     {% if r.kind == "member" %}<span class="cu-tag cu-member">Thành viên</span>{% else %}<span class="cu-tag cu-guest">Vãng lai</span>{% endif %}
                                     {% if r.is_staff %}<span class="cu-tag cu-staff">Quản trị</span>{% endif %}
                                 </td>
-                                <td>{% if r.phone %}{{ r.phone }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
-                                <td>{% if r.email %}{{ r.email }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td>
+                                    {% if r.phone %}{{ r.phone }}{% else %}<span class="cu-muted">Chưa có SĐT</span>{% endif %}
+                                    {% if r.email %}<br><span class="cu-muted">{{ r.email }}</span>{% endif %}
+                                </td>
+                                <td class="cu-addr">{% if r.address %}{{ r.address }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td>{% if r.joined %}{{ r.joined|date:"d/m/Y" }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
                                 <td class="num">
                                     {{ r.orders }}{% if r.cancelled %} <span class="cu-muted" title="Đơn đã hủy">(+{{ r.cancelled }} hủy)</span>{% endif %}
                                 </td>
-                                <td class="num">{% if r.spent %}<span class="cu-spent">{{ r.spent|vnd }}</span>{% else %}<span class="cu-muted">—</span>{% endif %}</td>
+                                <td class="num">{% if r.spent %}<span class="cu-spent">{{ r.spent|vnd }}</span><br><span class="cu-muted" style="font-size:.78rem;">TB {{ r.avg|vnd }}/đơn</span>{% else %}<span class="cu-muted">—</span>{% endif %}</td>
                                 <td>{% if r.last %}{{ r.last|date:"d/m/Y" }}{% else %}<span class="cu-muted">—</span>{% endif %}</td>
                                 <td class="num">{% if r.orders or r.cancelled %}<a class="bn-btn bn-btn-ghost" href="{{ r.orders_url }}">Xem đơn</a>{% endif %}</td>
                             </tr>

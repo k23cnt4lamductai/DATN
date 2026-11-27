@@ -1,22 +1,24 @@
 {% extends "admin/base_site.html" %}
 {% load vnd %}
 
+{% block content_title %}Báo cáo doanh thu{% endblock %}
+
 {% block content %}
 <style>
     .rp {
-        --rp-card: #fff; --rp-line: #f0e2dc; --rp-text: #5a3e36; --rp-muted: #8d7b75; --rp-soft: #fdeef2; --rp-brand: #c9506f;
+        --rp-card: #fff; --rp-line: #e8ddd2; --rp-text: #3d2b22; --rp-muted: #86766d; --rp-soft: #f4ebe2; --rp-brand: #5c2f1f;
         color: var(--rp-text); margin-bottom: 30px;
     }
-    body.dark-mode .rp { --rp-card: #26232d; --rp-line: #3a3642; --rp-text: #eee6e2; --rp-muted: #a89c96; --rp-soft: #3a2530; --rp-brand: #f19ab0; }
+    body.dark-mode .rp { --rp-card: #2a211b; --rp-line: #3e322a; --rp-text: #f1e8df; --rp-muted: #a8998d; --rp-soft: #3b2c22; --rp-brand: #d9b27c; }
     .rp a { text-decoration: none; }
     .rp-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
     .rp-bar form { display: flex; gap: 8px; align-items: center; margin: 0; }
     .rp-bar input[type=date] { padding: 8px 12px; border: 1px solid var(--rp-line); border-radius: 10px; background: var(--rp-card); color: var(--rp-text); }
     .rp-btn { display: inline-block; padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: .9rem;
-              background: #e8728f; color: #fff !important; border: 1px solid #e8728f; }
-    .rp-btn:hover { background: #c9506f; border-color: #c9506f; }
+              background: #7b4531; color: #fff !important; border: 1px solid #7b4531; }
+    .rp-btn:hover { background: #5c2f1f; border-color: #5c2f1f; }
     .rp-btn-ghost { background: var(--rp-card); color: var(--rp-brand) !important; border-color: var(--rp-line); }
-    .rp-btn-ghost:hover { background: var(--rp-soft); border-color: #e8728f; }
+    .rp-btn-ghost:hover { background: var(--rp-soft); border-color: #7b4531; }
     .rp-btn-off { opacity: .4; pointer-events: none; }
     .rp-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 14px; }
     .rp-title small { font-weight: 400; color: var(--rp-muted); margin-left: 8px; }

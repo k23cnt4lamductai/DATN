@@ -129,21 +129,25 @@ def build_customers(query=""):
     kèm số đơn và tổng chi tiêu (không tính đơn đã hủy). Sắp xếp: chi tiêu nhiều nhất trước."""
     from django.contrib.auth import get_user_model
 
-    users = {u.pk: u for u in get_user_model().objects.all()}
+    users = {u.pk: u for u in get_user_model().objects.select_related("profile")}
     rows = {}
     for user in users.values():
+        profile = getattr(user, "profile", None)      # tài khoản cũ có thể chưa có hồ sơ
         rows[("u", user.pk)] = {
             "kind": "member", "user_id": user.pk,
             "name": user.get_full_name() or user.get_username(),
-            "email": user.email or "", "phone": "",
+            "username": user.get_username(),
+            "email": user.email or "", "phone": getattr(profile, "phone", "") or "",
+            "address": getattr(profile, "address", "") or "",
+            "joined": user.date_joined,
             "orders": 0, "cancelled": 0, "spent": 0, "last": None,
             "is_staff": user.is_staff,
         }
 
     orders = Order.objects.order_by("created_at").values_list(
-        "user_id", "full_name", "phone", "status", "total", "created_at"
+        "user_id", "full_name", "phone", "status", "total", "created_at", "address"
     )
-    for user_id, full_name, phone, status, total, created in orders:
+    for user_id, full_name, phone, status, total, created, address in orders:
         if user_id in users:
             key = ("u", user_id)
         else:
@@ -152,11 +156,14 @@ def build_customers(query=""):
             if key not in rows:
                 rows[key] = {
                     "kind": "guest", "user_id": None, "name": full_name, "email": "",
+                    "username": "", "address": address, "joined": None,
                     "phone": phone, "orders": 0, "cancelled": 0, "spent": 0, "last": None,
                     "is_staff": False,
                 }
         row = rows[key]
         row["phone"] = phone                       # số điện thoại ở đơn gần nhất
+        if address and not row["address"]:
+            row["address"] = address
         if row["kind"] == "guest":
             row["name"] = full_name
         if status == Order.Status.CANCELLED:
@@ -167,8 +174,11 @@ def build_customers(query=""):
         row["last"] = created
 
     result = list(rows.values())
+    for r in result:
+        r["avg"] = r["spent"] / r["orders"] if r["orders"] else 0
     if query:
         q = query.strip().lower()
-        result = [r for r in result if q in r["name"].lower() or q in r["phone"] or q in r["email"].lower()]
+        result = [r for r in result if q in r["name"].lower() or q in r["phone"]
+                  or q in r["email"].lower() or q in r["username"].lower()]
     result.sort(key=lambda r: (-r["spent"], -r["orders"], r["name"].lower()))
     return result

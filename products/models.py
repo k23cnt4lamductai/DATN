@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
+from content.utils import unique_slug
 
 
 class Category(models.Model):
@@ -16,7 +16,7 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = unique_slug(Category, self.name, instance=self, max_length=110, fallback="danh-muc")
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = unique_slug(Product, self.name, instance=self, max_length=200, fallback="banh")
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

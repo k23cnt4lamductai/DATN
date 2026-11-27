@@ -12,8 +12,15 @@ from .pricing import calc_new_price
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug")
-    prepopulated_fields = {"slug": ("name",)}
+    list_display = ("name", "so_banh")
+    fields = ("name",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_n=Count("products"))
+
+    @admin.display(description="Số bánh", ordering="_n")
+    def so_banh(self, obj):
+        return obj._n
 
 
 class StockFilter(admin.SimpleListFilter):
@@ -59,9 +66,13 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ("price", "stock", "is_available")   # sửa nhanh ngay trên danh sách
     list_filter = ("category", "is_available", StockFilter)
     search_fields = ("name",)
-    prepopulated_fields = {"slug": ("name",)}
     list_per_page = 20
     readonly_fields = ("image_preview",)
+    fieldsets = (
+        ("Thông tin bán hàng", {"fields": (("category", "name"), ("price", "stock"), "is_available")}),
+        ("Mô tả và hình ảnh", {"fields": ("description", "image", "image_preview")}),
+        ("Thông tin sản phẩm", {"fields": (("weight", "shelf_life"), "storage")}),
+    )
     actions = ["act_hide", "act_show", "act_price", "act_restock"]
 
     def get_queryset(self, request):

@@ -4,25 +4,21 @@ JAZZMIN_SETTINGS = {
     # --- Tên / thương hiệu ---
     "site_title": "Quản trị Tài Bakery",
     "site_header": "Tài Bakery",
-    "site_brand": "🧁 Tài Bakery",
+    "site_brand": "Tài Bakery",
     "welcome_sign": "Chào mừng đến trang quản lý Tài Bakery",
     "copyright": "Tài Bakery",
     "language_chooser": False,
+    "site_logo": "core/img/logo.svg",          # logo chữ T giống website
+    "login_logo": "core/img/logo.svg",
+    "site_icon": "core/img/logo.svg",          # biểu tượng trên tab trình duyệt
+    "site_logo_classes": "rounded-circle",
 
     # --- Tìm nhanh trên thanh trên cùng ---
-    "search_model": ["products.Product", "orders.Order"],
+    "search_model": ["products.Product"],
 
     # --- Thanh menu trên ---
     "topmenu_links": [
-        {"name": "🏠 Về trang chủ", "url": "/"},
-        {"name": "Tổng quan", "url": "admin:index"},
-        {"name": "Đơn hàng", "url": "admin:orders_order_changelist", "permissions": ["orders.view_order"]},
-        {"name": "Báo cáo", "url": "admin:orders_order_report", "permissions": ["orders.view_order"]},
-        {"name": "Khách hàng", "url": "admin:orders_order_customers", "permissions": ["orders.view_order"]},
-        {"name": "Sản phẩm", "url": "admin:products_product_changelist", "permissions": ["products.view_product"]},
-    ],
-    "usermenu_links": [
-        {"name": "Về trang chủ website", "url": "/"},
+        {"name": "Xem website", "url": "/", "new_window": True},
     ],
     "index_title": "Tổng quan",
 
@@ -30,10 +26,10 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": True,
     "order_with_respect_to": [
-        "orders", "orders.order", "orders.orderitem",
+        "orders", "orders.order", "orders.coupon", "orders.orderitem",
         "products", "products.product", "products.category", "products.review", "products.ingredient",
         "stores", "stores.branch",
-        "content", "content.article", "content.jobposting", "content.jobapplication",
+        "content", "content.article", "content.subscriber", "content.jobposting", "content.jobapplication",
         "auth",
     ],
     "icons": {
@@ -43,6 +39,7 @@ JAZZMIN_SETTINGS = {
         "orders": "fas fa-receipt",
         "orders.order": "fas fa-receipt",
         "orders.orderitem": "fas fa-list",
+        "orders.coupon": "fas fa-ticket-alt",
         "products": "fas fa-birthday-cake",
         "products.product": "fas fa-birthday-cake",
         "products.category": "fas fa-tags",
@@ -52,6 +49,7 @@ JAZZMIN_SETTINGS = {
         "stores.branch": "fas fa-store",
         "content": "fas fa-newspaper",
         "content.article": "fas fa-newspaper",
+        "content.subscriber": "fas fa-envelope-open-text",
         "content.jobposting": "fas fa-briefcase",
         "content.jobapplication": "fas fa-file-signature",
     },
@@ -74,7 +72,7 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
 
-    # --- Màu hồng - kem giống website (file CSS riêng) ---
+    # --- Màu nâu - kem - vàng giống website (file CSS riêng) ---
     "custom_css": "core/css/admin_custom.css",
     "custom_js": "core/js/admin_theme.js",   # nút đổi giao diện sáng / tối
 
